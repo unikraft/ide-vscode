@@ -55,7 +55,7 @@ async function configureFromYaml(
         return;
     }
 
-    const kraftYaml = yaml.safeLoad(readFileSync(kraftYamlPath, 'utf-8'));
+    const kraftYaml = yaml.load(readFileSync(kraftYamlPath, 'utf-8'));
     const target = await window.showQuickPick(
         kraftYaml.targets.map((target: { architecture: any; platform: any; }) =>
             `${target.platform}-${target.architecture}`),

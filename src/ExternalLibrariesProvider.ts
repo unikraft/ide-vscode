@@ -106,7 +106,7 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 			return {};
 		}
 
-		return yaml.safeLoad(readFileSync(kraftYamlPath, 'utf-8'));
+		return yaml.load(readFileSync(kraftYamlPath, 'utf-8'));
 	}
 
 	private getCore(kraftYaml: any): Library[] {

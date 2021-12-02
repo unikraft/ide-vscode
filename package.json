@@ -142,6 +142,9 @@
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js"
 	},
+	"dependencies": {
+		"js-yaml": "^4.0.0"
+	},
 	"devDependencies": {
 		"@types/vscode": "^1.59.0",
 		"@types/glob": "^7.1.3",
