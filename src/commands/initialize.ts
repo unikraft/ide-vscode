@@ -3,10 +3,8 @@ import { join } from 'path';
 import { execSync } from 'child_process';
 import { getProjectPath, refreshViews, updateUkWorkdir } from './utils';
 import { Command } from './Command';
-
-const { exec } = require(`child_process`);
-
-// TODO: replace ukWorkdir
+import { homedir } from 'os';
+import { setupLangSupport } from '../language/language';
 
 export async function kraftInitialize(
     kraftChannel: OutputChannel,
@@ -47,7 +45,10 @@ async function initializeApplication(
     kraftChannel: OutputChannel,
     kraftStatusBarItem: StatusBarItem,
 ) {
-    const ukWorkdir = join(projectPath, '.unikraft');
+    const ukWorkdir = await chooseUkWorkdir(projectPath);
+    if (!ukWorkdir) {
+        return;
+    }
 
     const options = {
         cwd: projectPath,
@@ -90,6 +91,7 @@ async function initializeApplication(
             () => {
                 refreshViews();
                 updateUkWorkdir(ukWorkdir, ConfigurationTarget.Workspace);
+                setupLangSupport(projectPath);
             }
         ));
     } else {
@@ -100,6 +102,7 @@ async function initializeApplication(
             () => {
                 refreshViews();
                 updateUkWorkdir(ukWorkdir, ConfigurationTarget.Workspace);
+                setupLangSupport(join(projectPath));
             }
         ));
     }
@@ -114,7 +117,11 @@ async function initializeLibrary(
     kraftChannel: OutputChannel,
     kraftStatusBarItem: StatusBarItem
 ) {
-    const ukWorkdir = join(projectPath, '.unikraft');
+    const ukWorkdir = await chooseUkWorkdir(projectPath);
+    if (!ukWorkdir) {
+        return;
+    }
+
     const libsPath = join(ukWorkdir, 'libs');
 
     const kraftEnv = Object.assign(process.env, { 'UK_WORKDIR': ukWorkdir });
@@ -189,6 +196,7 @@ async function initializeLibrary(
         () => {
             refreshViews();
             updateUkWorkdir(ukWorkdir, ConfigurationTarget.Workspace);
+            setupLangSupport(join(projectPath));
         }
     ));
 
@@ -212,6 +220,7 @@ async function initializeCore(
         () => {
             refreshViews();
             updateUkWorkdir(projectPath, ConfigurationTarget.Workspace);
+            setupLangSupport(projectPath);
         }
     );
 
@@ -228,4 +237,19 @@ function getApps(ukWorkdir: string): string[] {
         .applications
         .map((app: { meta: { name: any; }; }) => app.meta.name)
         .sort();
+}
+
+async function chooseUkWorkdir(projectPath: string): Promise<string | undefined> {
+    const ukWorkdirLocation = await window.showQuickPick(
+        ['Use local', 'Use global'],
+        { placeHolder: 'Choose UK_WORKDIR location' }
+    );
+    if (!ukWorkdirLocation) {
+        return;
+    }
+
+    if (ukWorkdirLocation === 'Use local')
+        return join(projectPath, '.unikraft');
+
+    return join(homedir(), '.unikraft');
 }

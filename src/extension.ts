@@ -1,9 +1,9 @@
 import { ExtensionContext } from 'vscode';
-import { KraftExtension } from './KraftExtension';
+import { UnikraftExtension } from './UnikraftExtension';
 
 export async function activate(context: ExtensionContext) {
-	const kraftExtension = new KraftExtension(context);
-	kraftExtension.activate();
+	const unikraftExtension = new UnikraftExtension(context);
+	unikraftExtension.activate();
 }
 
 export function deactivate() {}

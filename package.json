@@ -1,162 +1,222 @@
 {
-  "name": "kraft",
-	"displayName": "Kraft",
-	"description": "",
-	"version": "1.0.0",
-	"publisher": "Unkiraft",
-	"engines": {
-		"vscode": "^1.59.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onView:externalLibraries"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"configuration": {
-			"type": "object",
-			"title": "Kraft",
-			"properties": {
-			  "kraft.githubToken": {
-				"type": "string",
-				"default": "abc",
-				"description": "Specifies the Github Token used by kraft."
-			  },
-			  "kraft.ukWorkdir": {
-				"type": "string",
-				"default": "",
-				"description": "Specifies UK_WORKDIR."
-			  }
-			}
+  "name": "unikraft",
+  "displayName": "Unikraft",
+  "description": "",
+  "version": "1.0.0",
+  "publisher": "Unkiraft",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/vscode-cpptools.git"
+  },
+  "engines": {
+    "vscode": "^1.59.0"
+  },
+  "keywords": [
+    "unikraft",
+    "unikernel"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:externalLibraries"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Unikraft",
+      "properties": {
+        "unikraft.githubToken": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies the Github Token used by kraft."
+        },
+        "unikraft.ukWorkdir": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies UK_WORKDIR."
+        },
+		"unikraft.paused": {
+			"type": "boolean",
+			"default": false,
+			"description": "Whether to start the unikernel in paused state."
 		},
-		"viewsContainers": {
-			"activitybar": [
-			  {
-				"id": "package-explorer",
-				"title": "Package Explorer",
-				"icon": "media/unikraft-u.svg"
-			  }
-			]
+		"unikraft.debug": {
+			"type": "boolean",
+			"default": false,
+			"description": "Whether to start the unikernel in debug mode."
 		},
-		"views": {
-			"package-explorer": [
-			  {
-				"id": "externalLibraries",
-				"name": "External Libraries",
-				"icon": "media/unikraft-u.svg",
-				"contextualTitle": "Package Explorer"
-			  }
-			]
+		"unikraft.gdb": {
+			"type": "boolean",
+			"default": false,
+			"description": "Whether to attach gdb."
 		},
-		"menus": {
-			"view/title": [
-				{
-					"command": "externalLibraries.addLibrary",
-					"when": "view == externalLibraries",
-					"group": "navigation"
-				},
-				{
-					"command": "externalLibraries.refreshEntry",
-					"when": "view == externalLibraries",
-					"group": "navigation"
-				}
-			],
-			"view/item/context": [
-				{
-                    "command": "externalLibraries.removeLibrary",
-                    "when": "view == externalLibraries && viewItem == library"
-                },
-				{
-                    "command": "externalLibraries.purgeLibrary",
-                    "when": "view == externalLibraries && viewItem == library"
-                }
-			]
+		"unikraft.gdb_port": {
+			"type": "number",
+			"default": 4123,
+			"description": "Port for gdb."
 		},
-		"commands": [
-			{
-				"command": "kraft.initialize",
-				"title": "Initialize project",
-				"category": "Kraft"
-			},
-			{
-				"command": "kraft.configure",
-				"title": "Configure project",
-				"category": "Kraft"
-			},
-			{
-				"command": "kraft.build",
-				"title": "Build project",
-				"category": "Kraft"
-			},
-			{
-				"command": "kraft.run",
-				"title": "Run project",
-				"category": "Kraft"
-			},
-			{
-				"command": "kraft.update",
-				"title": "Update",
-				"category": "Kraft"
-			},
-			{
-				"command": "kraft.editToken",
-				"title": "Edit the Github token",
-				"category": "Kraft"
-			},
-			{
-                "command": "externalLibraries.addLibrary",
-                "title": "Add library",
-                "icon": {
-                    "light": "resources/light/add.svg",
-                    "dark": "resources/dark/add.svg"
-                }
-            },
-			{
-                "command": "externalLibraries.removeLibrary",
-                "title": "Remove library"
-            },
-			{
-                "command": "externalLibraries.purgeLibrary",
-                "title": "Purge library"
-            },
-			{
-                "command": "externalLibraries.refreshEntry",
-                "title": "Refresh",
-                "icon": {
-                    "light": "resources/light/refresh.svg",
-                    "dark": "resources/dark/refresh.svg"
-                }
-            }
-		]
-	},
-	"extensionPack": [
-		"trond-snekvik.kconfig-lang"
-	],
-	"scripts": {
-		"vscode:prepublish": "npm install && npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
-	},
-	"dependencies": {
-		"js-yaml": "^4.0.0"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.59.0",
-		"@types/glob": "^7.1.3",
-		"@types/mocha": "^8.2.2",
-		"@types/node": "14.x",
-		"eslint": "^7.27.0",
-		"@typescript-eslint/eslint-plugin": "^4.26.0",
-		"@typescript-eslint/parser": "^4.26.0",
-		"winston": "^3.3.3",
-		"glob": "^7.1.7",
-		"mocha": "^8.4.0",
-		"typescript": "^4.3.2",
-		"vscode-test": "^1.5.2"
-	}
+		"unikraft.create_bridge": {
+			"type": "boolean",
+			"default": false,
+			"description": "Whether to create a new bridge."
+		},
+		"unikraft.bridged": {
+			"type": "boolean",
+			"default": false,
+			"description": "Whether to use a bridge or not."
+		},
+		"unikraft.bridge_name": {
+			"type": "string",
+			"default": "virbr0",
+			"description": "Bridge name."
+		},
+		"unikraft.ip4": {
+			"type": "string",
+			"default": "172.44.0.2",
+			"description": "IP of the unikernel."
+		},
+		"unikraft.gateway_ip4": {
+			"type": "string",
+			"default": "172.44.0.1",
+			"description": "IP of the gateway."
+		},
+		"unikraft.netmask4": {
+			"type": "string",
+			"default": "255.255.255.0",
+			"description": "Network mask."
+		}
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "package-explorer",
+          "title": "Package Explorer",
+          "icon": "media/unikraft-u.svg"
+        }
+      ]
+    },
+    "views": {
+      "package-explorer": [
+        {
+          "id": "externalLibraries",
+          "name": "External Libraries",
+          "icon": "media/unikraft-u.svg",
+          "contextualTitle": "Package Explorer"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "externalLibraries.addLibrary",
+          "when": "view == externalLibraries",
+          "group": "navigation"
+        },
+        {
+          "command": "externalLibraries.refreshEntry",
+          "when": "view == externalLibraries",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "externalLibraries.removeLibrary",
+          "when": "view == externalLibraries && viewItem == library"
+        },
+        {
+          "command": "externalLibraries.purgeLibrary",
+          "when": "view == externalLibraries && viewItem == library"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "unikraft.initialize",
+        "title": "Initialize project",
+        "category": "Unikraft"
+      },
+      {
+        "command": "unikraft.configure",
+        "title": "Configure project",
+        "category": "Unikraft"
+      },
+      {
+        "command": "unikraft.build",
+        "title": "Build project",
+        "category": "Unikraft"
+      },
+      {
+        "command": "unikraft.run",
+        "title": "Run project",
+        "category": "Unikraft"
+      },
+      {
+        "command": "unikraft.update",
+        "title": "Update",
+        "category": "Unikraft"
+      },
+      {
+        "command": "unikraft.editToken",
+        "title": "Edit the Github token",
+        "category": "Unikraft"
+      },
+      {
+        "command": "externalLibraries.addLibrary",
+        "title": "Add library",
+        "icon": {
+          "light": "resources/light/add.svg",
+          "dark": "resources/dark/add.svg"
+        }
+      },
+      {
+        "command": "externalLibraries.removeLibrary",
+        "title": "Remove library"
+      },
+      {
+        "command": "externalLibraries.purgeLibrary",
+        "title": "Purge library"
+      },
+      {
+        "command": "externalLibraries.refreshEntry",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      }
+    ]
+  },
+  "extensionPack": [
+    "ms-vscode.cpptools",
+    "ms-python.python"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm install && npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "js-yaml": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.59.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "glob": "^7.1.7",
+    "mocha": "^9.2.0",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2",
+    "winston": "^3.3.3"
+  }
 }
