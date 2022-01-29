@@ -8,7 +8,7 @@ export function getProjectPath(): string | undefined {
 
 export function getUkWorkdir(): string {
 	return workspace.getConfiguration()
-		.get('kraft.ukWorkdir', '');
+		.get('unikraft.ukWorkdir', '');
 }
 
 export async function updateUkWorkdir(
@@ -16,14 +16,14 @@ export async function updateUkWorkdir(
     scope=ConfigurationTarget.Global
 ) {
     await workspace.getConfiguration().update(
-        'kraft.ukWorkdir',
+        'unikraft.ukWorkdir',
         ukWorkdir,
         scope
     );
 }
 
 export function getGithubToken(): string {
-	return workspace.getConfiguration().get('kraft.githubToken', '');
+	return workspace.getConfiguration().get('unikraft.githubToken', '');
 }
 
 export async function updateGithubToken(kraftChannel: OutputChannel)
@@ -37,7 +37,7 @@ export async function updateGithubToken(kraftChannel: OutputChannel)
     }
 
     await workspace.getConfiguration().update(
-        'kraft.githubToken',
+        'unikraft.githubToken',
         githubToken,
         ConfigurationTarget.Global
     );

@@ -1,23 +1,25 @@
 import * as vscode from 'vscode';
 import * as utils from './commands/utils';
+import { reloadIncludes } from './language/c';
+import { setupPythonSupport } from './language/python';
 import { ExternalLibrariesProvider, Library } from './ExternalLibrariesProvider';
 import { kraftInitialize } from './commands/initialize';
 import { kraftConfigure } from './commands/configure';
 import { kraftBuild } from './commands/build';
 import { kraftRun } from './commands/run';
 import { kraftUpdate } from './commands/update';
-import { execSync } from 'child_process';
 
+import { execSync } from 'child_process';
 import { env } from 'process';
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 
-export class KraftExtension {
+export class UnikraftExtension {
 
 	constructor(private context: vscode.ExtensionContext) {}
 
-	private kraftChannel = vscode.window.createOutputChannel(' Log (Kraft)');
+	private kraftChannel = vscode.window.createOutputChannel(' Log (Unikraft)');
 	private kraftStatusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Left,
         100
@@ -44,8 +46,15 @@ export class KraftExtension {
             if (t.exitStatus) {
                 if (t.name === 'kraft run') {
                     this.kraftStatusBarItem.text = 'Done running project.';
-                } else if (t.name === 'kraft configure') {
+                } else if (t.name === 'kraft menuconfig') {
                     this.kraftStatusBarItem.text = 'Done configuring project.';
+
+                    const errFile = '/tmp/err_kraft_configure';
+                    if (fs.existsSync(errFile)) {
+                        vscode.window.showErrorMessage(fs.readFileSync(errFile).toString());
+
+                        fs.rmSync(errFile);
+                    }
                 }
     
                 if (!t.exitStatus.code) {
@@ -58,9 +67,16 @@ export class KraftExtension {
             }
         });
 
-        this.kraftStatusBarItem.text = 'Kraft';
+        vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
+            if (path.basename(document.fileName) === 'kraft.yaml') {
+                setupPythonSupport(utils.getProjectPath());
+                reloadIncludes(utils.getProjectPath());
+            }
+        });
+
+        this.kraftStatusBarItem.text = 'Unikraft';
         vscode.window.showInformationMessage(
-            'Congratulations, your extension "kraft" is now active!'
+            'Congratulations, your extension "Unikraft" is now active!'
         );
     }
 
@@ -115,13 +131,13 @@ export class KraftExtension {
 
     private registerCommands() {
         const initializeCommand = vscode.commands.registerCommand(
-            'kraft.initialize',
+            'unikraft.initialize',
             async () => {
                 kraftInitialize(this.kraftChannel, this.kraftStatusBarItem);
                 this.externalLibrariesProvider.ukWorkdir = utils.getUkWorkdir();
         });
         const configureCommand = vscode.commands.registerCommand(
-            'kraft.configure',
+            'unikraft.configure',
             async () => kraftConfigure(
                     this.kraftChannel,
                     this.kraftStatusBarItem,
@@ -129,11 +145,11 @@ export class KraftExtension {
                 )
         );
         const buildCommand = vscode.commands.registerCommand(
-            'kraft.build',
+            'unikraft.build',
             async () => kraftBuild(this.kraftChannel,this.kraftStatusBarItem)
         );
         const runCommand = vscode.commands.registerCommand(
-            'kraft.run',
+            'unikraft.run',
             async () => kraftRun(
                 this.kraftChannel,
                 this.kraftStatusBarItem,
@@ -141,11 +157,11 @@ export class KraftExtension {
             )
         );
         const updateCommand = vscode.commands.registerCommand(
-            'kraft.update',
+            'unikraft.update',
             async () => kraftUpdate(this.kraftChannel, this.kraftStatusBarItem)
         );
         const editTokenCommand = vscode.commands.registerCommand(
-            'kraft.editToken',
+            'unikraft.editToken',
             async () => utils.updateGithubToken(this.kraftChannel)
         );
 
