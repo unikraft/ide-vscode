@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as utils from './commands/utils';
-import { reloadIncludes } from './language/c';
+import { reloadConfig, reloadIncludes } from './language/c';
 import { setupPythonSupport } from './language/python';
 import { ExternalLibrariesProvider, Library } from './ExternalLibrariesProvider';
 import { kraftInitialize } from './commands/initialize';
@@ -69,8 +69,14 @@ export class UnikraftExtension {
 
         vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
             if (path.basename(document.fileName) === 'kraft.yaml') {
-                setupPythonSupport(utils.getProjectPath());
-                reloadIncludes(utils.getProjectPath());
+                const projectPath = utils.getProjectPath();
+                setupPythonSupport(projectPath);
+                reloadIncludes(projectPath);
+                reloadConfig(projectPath);
+            }
+
+            if (path.basename(document.fileName) === '.config') {
+                reloadConfig(utils.getProjectPath());
             }
         });
 
