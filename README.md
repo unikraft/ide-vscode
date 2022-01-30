@@ -2,6 +2,8 @@
 
 The Unikraft VSCode Extension extension facilitates the development of Unikraft applications and libraries (both external and internal).
 
+![helloworld](https://github.com/unikraft/ide-vscode/blob/prototype/media/helloworld.gif)
+
 ## Installation
 
 Enter the extension directory and run the following commands:
@@ -65,6 +67,8 @@ The `External libraries` view allows inspecting various types of external librar
 * the ones that are only specified in `kraft.yaml` (red icon);
 * the ones that are only present in the project hierarchy (green icon).
 
+![libs](https://github.com/unikraft/ide-vscode/blob/prototype/media/libs.gif)
+
 A new library can be added to the project from this view by clicking the `+` button and selecting the library and its version from a drop-down list.
 
 A library can either be removed from the project (it will still be stored on disk) or purged by clicking right on it.
@@ -119,6 +123,8 @@ This extension contributes the following settings:
 * `unikraft.ip4`: IP of the unikernel (default is 172.44.0.2)
 * `unikraft.gateway_ip4`: IP of the gateway (default is 172.44.0)
 * `unikraft.netmask4`: network mask (default is 255.255.255.0)
+
+![helloworld](https://github.com/unikraft/ide-vscode/blob/prototype/media/httpreply.gif)
 
 Besides using `settings.json`, these settings can also be edited when clicking CTRL + Comma and searching for their names.
 
