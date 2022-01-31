@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+
 import { exec } from "child_process";
 import { OutputChannel, StatusBarItem, window } from "vscode";
 

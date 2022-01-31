@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+
 import { ConfigurationTarget, OutputChannel, commands, window, workspace } from 'vscode';
 
 export function getProjectPath(): string | undefined {

@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+
 import { ConfigurationTarget, workspace } from "vscode";
 import * as utils from './../commands/utils';
 import { join } from 'path';
