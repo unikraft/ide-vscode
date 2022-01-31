@@ -1,9 +1,16 @@
 # Change Log
 
-All notable changes to the "kraft" extension will be documented in this file.
+## [1.0.0] - 2022-02-01
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+### Added
+- Project initialization
+    - Application
+    - Library
+    - Core
+- Project configuration
+- Project building
+- Project running
+- External dependencies inspection
+- Intellisense for:
+    - C
+    - Python

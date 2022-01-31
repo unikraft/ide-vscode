@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+
 import * as vscode from 'vscode';
 import * as utils from './commands/utils';
 import { reloadConfig, reloadIncludes } from './language/c';

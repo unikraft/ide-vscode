@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+
 import { ExtensionContext, OutputChannel, StatusBarItem, window, workspace } from 'vscode';
 import { existsSync, readFileSync } from 'fs';
 import { basename, join } from 'path';

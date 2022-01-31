@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+
 import { OutputChannel, StatusBarItem } from 'vscode';
 import { Command } from './Command';
 import { getGithubToken } from './utils';

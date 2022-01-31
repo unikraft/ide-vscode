@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+
 import { join } from 'path';
 import { readdirSync, readFileSync, statSync } from "fs";
 

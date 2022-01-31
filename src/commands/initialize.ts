@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+
 import { ConfigurationTarget, OutputChannel, StatusBarItem, window } from 'vscode';
 import { join } from 'path';
 import { execSync } from 'child_process';

@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+
 import { Event, EventEmitter, OutputChannel, StatusBarItem, TreeDataProvider, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
 import { existsSync, lstatSync, readFileSync } from 'fs';
 import { join } from 'path';
