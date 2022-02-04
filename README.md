@@ -9,7 +9,7 @@ The Unikraft VSCode Extension extension facilitates the development of Unikraft 
 Enter the extension directory and run the following commands:
 ```
 sudo vsce package
-code --install-extension unikraft-0.0.1.vsix
+code --install-extension unikraft-1.0.0.vsix
 ```
 
 ## Features
