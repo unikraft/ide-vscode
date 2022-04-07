@@ -1,14 +1,15 @@
 {
-  "name": "unikraft",
-  "displayName": "Unikraft",
-  "description": "",
-  "version": "1.0.0",
-  "publisher": "Unkiraft",
+  "name": "unikraft-ide-vscode",
+  "displayName": "Unikraft VSCode Extension",
+	"description": "Seamlessly build and manage Unikraft components from within VSCode!",
+  "version": "0.1.0",
+  "publisher": "unikraft",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/unikraft/ide-vscode"
+    "url": "https://github.com/unikraft/ide-vscode.git"
   },
+	"homepage": "https://github.com/unikraft/ide-vscode/main/README.md",
   "engines": {
     "vscode": "^1.59.0"
   },
@@ -22,6 +23,11 @@
   "activationEvents": [
     "onView:externalLibraries"
   ],
+	"icon": "media/unikraft-logo.png",
+	"galleryBanner": {
+		"color": "#0E2F5F",
+		"theme": "dark"					
+	},
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
