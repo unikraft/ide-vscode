@@ -4,14 +4,6 @@ The Unikraft VSCode Extension extension facilitates the development of Unikraft 
 
 ![helloworld](https://github.com/unikraft/ide-vscode/blob/prototype/media/helloworld.gif)
 
-## Installation
-
-Enter the extension directory and run the following commands:
-```
-sudo vsce package
-code --install-extension unikraft-1.0.0.vsix
-```
-
 ## Features
 
 ### Project initialization
