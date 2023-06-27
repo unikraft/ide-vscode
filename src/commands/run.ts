@@ -1,141 +1,136 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
-import { ExtensionContext, OutputChannel, StatusBarItem, window, workspace } from 'vscode';
+import { OutputChannel, StatusBarItem, window, workspace } from 'vscode';
 import { existsSync, readFileSync } from 'fs';
 import { basename, join } from 'path';
-import { getProjectPath, getUkWorkdir } from './utils';
-import * as net from 'net';
+import { getProjectPath, getSourcesDir, getManifestsDir, getDefaultFileNames, showErrorMessage, getKraftYaml, showInfoMessage } from './utils';
 
 const yaml = require('js-yaml');
 
 export async function kraftRun(
 	kraftChannel: OutputChannel,
 	kraftStatusBarItem: StatusBarItem,
-	context: ExtensionContext
 ) {
+	kraftChannel.show(true);
 	const projectPath = getProjectPath();
 	if (!projectPath) {
-		kraftChannel.appendLine('No workspace.');
+		showErrorMessage(kraftChannel, kraftStatusBarItem, 'Run error: no workspace.');
 		return;
 	}
 
-	const target = await getTarget(kraftChannel, projectPath);
-    if (!target) {
-        return;
-    }
+	const target = await getTarget(kraftChannel, kraftStatusBarItem, projectPath);
+	if (!target) {
+		return;
+	}
 	const splitTarget = target.split('-');
 
-	const bridgeName = workspace.getConfiguration()
-		.get('unikraft.bridge_name', 'virbr0');
-	var runArgs = `-p ${splitTarget[0]} -m ${splitTarget[1]}`;
+	var runArgs = `--plat ${splitTarget[0]} -m ${splitTarget[1]}`;
 
-	const debug = workspace.getConfiguration().get('unikraft.debug', false);
-	if (debug) {
+	const symbolic = workspace.getConfiguration().get('unikraft.symbolic', false);
+	if (symbolic) {
+		runArgs += ' --symbolic';
+	}
+
+	const disableAccel = workspace.getConfiguration().get('unikraft.disableAccel', false);
+	if (disableAccel) {
+		runArgs += ' -W';
+	}
+
+	const detach = workspace.getConfiguration().get('unikraft.detach', false);
+	if (detach) {
 		runArgs += ' -d';
 	}
 
-	const paused = workspace.getConfiguration().get('unikraft.paused', false);
-	if (paused) {
-		runArgs += ' -P';
+	const remove = workspace.getConfiguration().get('unikraft.remove', false);
+	if (remove) {
+		runArgs += ' --rm';
 	}
 
-	const gdb = workspace.getConfiguration().get('unikraft.gdb', false);
-	if (gdb) {
-		runArgs += ' -g ';
-		runArgs += workspace.getConfiguration().get('unikraft.gdb_port', 4123);
+	const ip = workspace.getConfiguration().get('unikraft.ip', '');
+	if (ip !== '') {
+		runArgs += ' --ip ' + ip;
 	}
 
-	const ip = workspace.getConfiguration().get('unikraft.ip4', '172.44.0.2');
-	const gateway_ip = workspace.getConfiguration()
-		.get('unikraft.gateway_ip4', '172.44.0.1');
-	const netmask = workspace.getConfiguration()
-		.get('unikraft.netmask4', '255.255.255.0');
-
-	const bridged = workspace.getConfiguration().get('unikraft.bridged', false);
-	if (bridged) {
-		if (!net.isIPv4(ip)) {
-			window.showErrorMessage(`Invalid ip address ${ip}.`);
-			return;
-		}
-
-		if (!net.isIPv4(gateway_ip)) {
-			window.showErrorMessage(`Invalid gateway_ip address ${gateway_ip}.`);
-			return;
-		}
-
-		if (!net.isIPv4(netmask)) {
-			window.showErrorMessage(`Invalid netmask ${netmask}.`);
-			return;
-		}
+	const network = workspace.getConfiguration().get('unikraft.network', '');
+	if (network !== '') {
+		runArgs += ' --network ' + network;
 	}
 
-	kraftStatusBarItem.text = 'Running project...';
+	const memory = workspace.getConfiguration().get('unikraft.memory', '');
+	if (memory !== '') {
+		runArgs += ' -M ' + memory;
+	}
 
-	const create_bridge = workspace.getConfiguration()
-		.get('unikraft.create_bridge', false);		
+	const ports = workspace.getConfiguration().get('unikraft.ports', []);
+	if (ports.length > 0) {
+		runArgs += ' --port';
+		ports.forEach(element => {
+			runArgs += " " + element;
+		});
+	}
 
+	showInfoMessage(kraftChannel, kraftStatusBarItem,
+		"Running project..."
+	)
 	try {
+		let sourcesDir = getSourcesDir();
+		let manifestsDir = getManifestsDir();
 		const terminal = window.createTerminal({
 			name: "kraft run",
 			cwd: projectPath,
 			hideFromUser: false,
-			shellPath: context.asAbsolutePath(join('src', 'scripts', 'run.sh')),
-			shellArgs:
-				create_bridge ? [runArgs, bridgeName, gateway_ip, netmask, ip, '1'] :
-				bridged ? [runArgs, bridgeName, gateway_ip, netmask, ip] :
-				[runArgs],
-			env: Object.assign(process.env, { 'UK_WORKDIR': getUkWorkdir() })
+			env: Object.assign(process.env, {
+				'KRAFTKIT_PATHS_MANIFESTS': manifestsDir,
+				'KRAFTKIT_PATHS_SOURCES': sourcesDir,
+				'KRAFTKIT_NO_CHECK_UPDATES': true
+			})
 		});
 
 		terminal.show();
+		terminal.sendText(`kraft run ${runArgs}`);
 	} catch (error) {
-		kraftStatusBarItem.text = '[Error] Run project';
-		kraftChannel.appendLine(`[Error] Run project ${error}.`);
+		showErrorMessage(kraftChannel, kraftStatusBarItem,
+			`[Error] Run project ${error}.`
+		)
 	}
 }
 
-async function getName(
-    kraftChannel: OutputChannel,
-    projectPath: string
-): Promise<string | undefined> {
-    const kraftYamlPath = join(projectPath, 'kraft.yaml');
-    if (!existsSync(kraftYamlPath)) {
-        kraftChannel.appendLine('No kraft.yaml');
-        return;
-    }
-
-    const kraftYaml = yaml.load(readFileSync(kraftYamlPath, 'utf-8'));
-
-	return kraftYaml.name;
-}
-
 async function getTarget(
-    kraftChannel: OutputChannel,
-    projectPath: string
+	kraftChannel: OutputChannel,
+	kraftStatusBarItem: StatusBarItem,
+	projectPath: string
 ): Promise<string | undefined> {
-    const kraftYamlPath = join(projectPath, 'kraft.yaml');
-    if (!existsSync(kraftYamlPath)) {
-        kraftChannel.appendLine('No kraft.yaml');
-        return;
-    }
-
-    const kraftYaml = yaml.load(readFileSync(kraftYamlPath, 'utf-8'));
-	const targets = kraftYaml.targets
+	const kraftYaml = getKraftYaml(projectPath);
+	if (kraftYaml.targets == undefined || kraftYaml.targets.length == 0) {
+		showErrorMessage(kraftChannel, kraftStatusBarItem,
+			'Run error: no target found in Kraftfile'
+		);
+		return;
+	}
+	const targets: string[] = kraftYaml.targets
 		.map((target: { architecture: any; platform: any; }) =>
-			`${target.platform}-${target.architecture}`)
+		target.platform == "firecracker" ? `fc-${target.architecture}` : `${target.platform}-${target.architecture}`) 
 		.filter((target: string) =>
 			existsSync(join(
 				projectPath,
+				'.unikraft',
 				'build',
 				`${basename(projectPath)}_${target}`
 			)
-		)
+			)
+		);
+
+	if (targets.length == 0) {
+		showErrorMessage(kraftChannel, kraftStatusBarItem,
+			'Run error: No matching builts found.'
+		);
+		return;
+	}
+
+	const target = await window.showQuickPick(
+		targets,
+		{ placeHolder: 'Choose the target' }
 	);
 
-    const target = await window.showQuickPick(
-        targets,
-        { placeHolder: 'Choose the target' }
-    );
-    
 	return target;
 }

@@ -1,7 +1,7 @@
 {
   "name": "unikraft-ide-vscode",
   "displayName": "Unikraft VSCode Extension",
-	"description": "Seamlessly build and manage Unikraft components from within VSCode!",
+  "description": "Seamlessly build and manage Unikraft components from within VSCode!",
   "version": "0.1.1",
   "publisher": "unikraft",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "type": "git",
     "url": "https://github.com/unikraft/ide-vscode.git"
   },
-	"homepage": "https://github.com/unikraft/ide-vscode/main/README.md",
+  "homepage": "https://github.com/unikraft/ide-vscode/main/README.md",
   "engines": {
     "vscode": "^1.59.0"
   },
@@ -23,77 +23,67 @@
   "activationEvents": [
     "onView:externalLibraries"
   ],
-	"icon": "media/unikraft-logo.png",
-	"galleryBanner": {
-		"color": "#0E2F5F",
-		"theme": "dark"					
-	},
+  "icon": "media/unikraft-logo.png",
+  "galleryBanner": {
+    "color": "#0E2F5F",
+    "theme": "dark"
+  },
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
       "type": "object",
       "title": "Unikraft",
       "properties": {
-        "unikraft.githubToken": {
+        "unikraft.sources": {
           "type": "string",
           "default": "",
-          "description": "Specifies the Github Token used by kraft."
+          "description": "Specifies the directory where all the packages are stored, By default it is set by environment variable KRAFTKIT_PATHS_SOURCES or file `$HOME/.config/kraftkit/config.yaml`."
         },
-        "unikraft.ukWorkdir": {
+        "unikraft.manifests": {
           "type": "string",
           "default": "",
-          "description": "Specifies UK_WORKDIR."
+          "description": "Specifies the directory where all the manifests are stored, By default it is set by environment variable KRAFTKIT_PATHS_MANIFESTS or file `$HOME/.config/kraftkit/config.yaml`."
         },
-		"unikraft.paused": {
-			"type": "boolean",
-			"default": false,
-			"description": "Whether to start the unikernel in paused state."
-		},
-		"unikraft.debug": {
-			"type": "boolean",
-			"default": false,
-			"description": "Whether to start the unikernel in debug mode."
-		},
-		"unikraft.gdb": {
-			"type": "boolean",
-			"default": false,
-			"description": "Whether to attach gdb."
-		},
-		"unikraft.gdb_port": {
-			"type": "number",
-			"default": 4123,
-			"description": "Port for gdb."
-		},
-		"unikraft.create_bridge": {
-			"type": "boolean",
-			"default": false,
-			"description": "Whether to create a new bridge."
-		},
-		"unikraft.bridged": {
-			"type": "boolean",
-			"default": false,
-			"description": "Whether to use a bridge or not."
-		},
-		"unikraft.bridge_name": {
-			"type": "string",
-			"default": "virbr0",
-			"description": "Bridge name."
-		},
-		"unikraft.ip4": {
-			"type": "string",
-			"default": "172.44.0.2",
-			"description": "IP of the unikernel."
-		},
-		"unikraft.gateway_ip4": {
-			"type": "string",
-			"default": "172.44.0.1",
-			"description": "IP of the gateway."
-		},
-		"unikraft.netmask4": {
-			"type": "string",
-			"default": "255.255.255.0",
-			"description": "Network mask."
-		}
+        "unikraft.detach": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to run unikernel in background"
+        },
+        "unikraft.disableAccel": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to disable acceleration of CPU (usually enables TCG)"
+        },
+        "unikraft.symbolic": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to use the debuggable (symbolic) unikernel"
+        },
+        "unikraft.remove": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to automatically remove the unikernel when it shutsdown"
+        },
+        "unikraft.ip": {
+          "type": "string",
+          "default": "",
+          "description": "Assign the provided IP address"
+        },
+        "unikraft.memory": {
+          "type": "string",
+          "default": "64M",
+          "description": "Assign MB memory to the unikernel"
+        },
+        "unikraft.network": {
+          "type": "string",
+          "default": "",
+          "description": "Attach instance to the provided network in the format <driver>:<network>"
+        },
+        "unikraft.ports": {
+          "type": "array",
+          "default": [],
+          "description": "Publish a machine's port(s) to the host"
+        }
       }
     },
     "viewsContainers": {
@@ -166,11 +156,6 @@
         "category": "Unikraft"
       },
       {
-        "command": "unikraft.editToken",
-        "title": "Edit the Github token",
-        "category": "Unikraft"
-      },
-      {
         "command": "externalLibraries.addLibrary",
         "title": "Add library",
         "icon": {
@@ -208,9 +193,6 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
-  "dependencies": {
-    "js-yaml": "^4.0.0"
-  },
   "devDependencies": {
     "@types/glob": "^7.1.3",
     "@types/mocha": "^8.2.2",
@@ -224,5 +206,10 @@
     "typescript": "^4.3.2",
     "vscode-test": "^1.5.2",
     "winston": "^3.3.3"
+  },
+  "dependencies": {
+    "command-exists": "^1.2.9",
+    "js-yaml": "^4.1.0",
+    "yaml": "^2.3.1"
   }
 }

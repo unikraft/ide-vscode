@@ -2,23 +2,25 @@
 
 import { OutputChannel, StatusBarItem } from 'vscode';
 import { Command } from './Command';
-import { getGithubToken } from './utils';
+import { showInfoMessage } from './utils';
 
 export async function kraftUpdate(
     kraftChannel: OutputChannel,
     kraftStatusBarItem: StatusBarItem
 ) {
+    kraftChannel.show(true);
     const command = new Command(
-        `kraft list update`,
+        `kraft pkg update`,
         {
             env: Object.assign(
-                process.env,
-                { 'UK_KRAFT_GITHUB_TOKEN': getGithubToken() })
+                process.env)
         },
-        'Finished running kraft list update.'
+        'Finished running kraft pkg update.'
     );
 
-    kraftStatusBarItem.text = 'kraft list update...';
+    showInfoMessage(kraftChannel, kraftStatusBarItem,
+        "kraft pkg update..."
+    )
 
     command.execute(kraftChannel, kraftStatusBarItem);
 }
