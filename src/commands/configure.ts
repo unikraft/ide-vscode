@@ -1,93 +1,42 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
-import { ExtensionContext, OutputChannel, StatusBarItem, window } from 'vscode';
-import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
-import { getProjectPath, getUkWorkdir } from './utils';
-import { Command } from './Command';
-
-const yaml = require('js-yaml');
+import { OutputChannel, StatusBarItem, window } from 'vscode';
+import { getProjectPath, showErrorMessage, getSourcesDir, getManifestsDir, showInfoMessage } from './utils';
 
 export async function kraftConfigure(
     kraftChannel: OutputChannel,
     kraftStatusBarItem: StatusBarItem,
-    context: ExtensionContext
 ) {
+    kraftChannel.show(true);
     // TODO: automatically update kraft.yaml syntax using a kraft command
     const projectPath = getProjectPath();
+    let sourceDir = getSourcesDir()
+    let manifestsDir = getManifestsDir()
     if (!projectPath) {
-        kraftChannel.appendLine('No workspace.');
+        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Configure error: No workspace.')
         return;
     }
 
-    const type = await window.showQuickPick(
-        ['from kraft.yaml', 'interactive'],
-        { placeHolder: 'Configuration type' }
-    );
-    if (!type) {
-        return;
-    }
-
-    kraftStatusBarItem.text = 'Configuring project...';
+    showInfoMessage(kraftChannel, kraftStatusBarItem,
+        "Configuring project..."
+    )
 
     try {
-        if (type === 'from kraft.yaml') {
-            configureFromYaml(
-                kraftChannel,
-                kraftStatusBarItem,
-                projectPath
-            );
-        } else if (type === 'interactive') {
-            configureInteractively(context);
-        }
-    } catch (error) {
-        kraftStatusBarItem.text = '[Error] Configure project';
-        kraftChannel.appendLine(`[Error] Configure project ${error}.`);
-    }
-}
-
-async function configureFromYaml(
-    kraftChannel: OutputChannel,
-    kraftStatusBarItem: StatusBarItem,
-    projectPath: string
-) {
-    const kraftYamlPath = join(projectPath, 'kraft.yaml');
-    if (!existsSync(kraftYamlPath)) {
-        kraftChannel.appendLine('No kraft.yaml');
-        return;
-    }
-
-    const kraftYaml = yaml.load(readFileSync(kraftYamlPath, 'utf-8'));
-    const target = await window.showQuickPick(
-        kraftYaml.targets.map((target: { architecture: any; platform: any; }) =>
-            `${target.platform}-${target.architecture}`),
-        { placeHolder: 'Choose the target' }
-    );
-    if (!target) {
-        return;
-    }
-
-    const splitTarget = target.split('-');
-
-    const command = new Command(
-        `kraft configure -F -p ${splitTarget[0]} -m ${splitTarget[1]}`,
-        {
+        let terminal = window.createTerminal({
+            name: "kraft menu",
             cwd: projectPath,
-            env: Object.assign(process.env, { 'UK_WORKDIR': getUkWorkdir() })
-        },
-        'Configured project.'
-    );
-
-    command.execute(kraftChannel, kraftStatusBarItem);
-}
-
-async function configureInteractively(context: ExtensionContext) {
-    let terminal = window.createTerminal({
-        name: "kraft menuconfig",
-        hideFromUser: false,
-        shellPath: context.asAbsolutePath(join('src',
-            'scripts',
-            'configure.sh')),
-    });
-    terminal.show();
+            hideFromUser: false,
+            env: Object.assign(process.env, {
+                'KRAFTKIT_PATHS_MANIFESTS': manifestsDir,
+                'KRAFTKIT_PATHS_SOURCES': sourceDir,
+                'KRAFTKIT_NO_CHECK_UPDATES': true
+            })
+        });
+        terminal.show();
+        terminal.sendText('kraft menu 2> /tmp/err_kraft_configure');
+    } catch (error) {
+        showErrorMessage(kraftChannel, kraftStatusBarItem,
+            `[Error] Configure project ${error}.`
+        )
+    }
 }

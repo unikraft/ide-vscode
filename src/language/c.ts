@@ -9,13 +9,18 @@ import { existsSync, readFileSync } from "fs";
 const yaml = require('js-yaml');
 
 export async function reloadIncludes(projectPath?: string) {
-    var includeFiles = getAllFiles(join(utils.getUkWorkdir(), 'unikraft'));
+    if (!projectPath) {
+        return;
+    }
+
+    const projectUnikraft = join(projectPath, '.unikraft')
+    var includeFiles = getAllFiles(join(projectUnikraft, 'unikraft'));
 
     if (projectPath) {
         const libPaths = getLibFiles(
             projectPath,
-            join(utils.getUkWorkdir(), 'libs'
-        ));
+            join(projectUnikraft, 'libs')
+        );
         libPaths.forEach(lib =>
             includeFiles = includeFiles.concat(getAllFiles(lib)));
     }
@@ -71,20 +76,27 @@ export async function setupCSupport(projectPath?: string) {
 }
 
 function getKraftYamlConfig(projectPath: string): string[] {
+    let kraftYamlPath = "";
+    utils.getDefaultFileNames().forEach(element => {
+        let temPath = join(projectPath, element)
+        if (existsSync(temPath)) {
+            kraftYamlPath = temPath
+        }
+    });
     const kraftYaml = yaml.load(
-        readFileSync(join(projectPath, 'kraft.yaml'), 'utf-8'));
+        readFileSync(kraftYamlPath, 'utf-8'));
 
-    const ukConfig = Object.keys(kraftYaml).includes('unikraft') 
-            && Object.keys(kraftYaml.unikraft).includes('kconfig') ?
+    const ukConfig = Object.keys(kraftYaml).includes('unikraft')
+        && Object.keys(kraftYaml.unikraft).includes('kconfig') ?
         kraftYaml.unikraft.kconfig :
         [];
 
     const kraftLibs = Object.keys(kraftYaml).includes('libraries') ?
         Object.keys(kraftYaml.libraries).flatMap(lib =>
-                    Object.keys(kraftYaml.libraries[lib]).includes('kconfig') ?
-                    kraftYaml.libraries[lib].kconfig :
-                    []) :
-            [];
+            Object.keys(kraftYaml.libraries[lib]).includes('kconfig') ?
+                kraftYaml.libraries[lib].kconfig :
+                []) :
+        [];
 
     return kraftLibs.concat(ukConfig);
 }
