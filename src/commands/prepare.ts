@@ -1,58 +1,43 @@
 import { OutputChannel, StatusBarItem, window } from 'vscode';
 import { Command } from './Command';
-import { existsSync } from 'fs';
-import { basename, join } from 'path';
 import { getProjectPath, showErrorMessage, getSourcesDir, getManifestsDir, getKraftYaml, showInfoMessage } from './utils';
 
-export async function kraftClean(
+export async function kraftPrepare(
     kraftChannel: OutputChannel,
     kraftStatusBarItem: StatusBarItem,
 ) {
     kraftChannel.show(true);
     const projectPath = getProjectPath();
     if (!projectPath) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No workspace.');
+        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Prepare error: No workspace.');
         return;
     }
 
     showInfoMessage(kraftChannel, kraftStatusBarItem,
-        "Cleaning project..."
+        "Preparing project..."
     )
 
-    cleanFromYaml(kraftChannel, kraftStatusBarItem, projectPath);
+    PrepareFromYaml(kraftChannel, kraftStatusBarItem, projectPath);
 }
 
-async function cleanFromYaml(
+async function PrepareFromYaml(
     kraftChannel: OutputChannel,
     kraftStatusBarItem: StatusBarItem,
     projectPath: string
 ) {
     const kraftYaml = getKraftYaml(projectPath);
     if (kraftYaml.targets == undefined || kraftYaml.targets.length == 0) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No target found in Kraftfile.');
+        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Prepare error: No target found in Kraftfile.');
         return;
     }
     const targets = kraftYaml.targets.map((target: { architecture: any; platform: any; }) =>
-        target.platform == "firecracker" ? `fc-${target.architecture}` : `${target.platform}-${target.architecture}`)
-        .filter((target: string) =>
-            existsSync(join(
-                projectPath,
-                '.unikraft',
-                'build',
-                `${basename(projectPath)}_${target}`
-            )
-            )
-        );
-    if (targets.length == 0) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No matching target found.');
-        return;
-    }
+        `${target.platform}-${target.architecture}`)
     const target = await window.showQuickPick(
         targets,
         { placeHolder: 'Choose the target' }
     );
     if (!target) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No target chose.');
+        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Prepare error: No target chose.');
         return;
     }
 
@@ -61,7 +46,7 @@ async function cleanFromYaml(
     let sourcesDir = getSourcesDir();
     let manifestsDir = getManifestsDir();
     const command = new Command(
-        `kraft clean -p ${splitTarget[0]} -m ${splitTarget[1]}`,
+        `kraft prepare -p ${splitTarget[0]} -m ${splitTarget[1]}`,
         {
             cwd: projectPath,
             env: Object.assign(process.env, {
@@ -70,7 +55,7 @@ async function cleanFromYaml(
                 'KRAFTKIT_NO_CHECK_UPDATES': true
             }),
         },
-        'Cleaned project.',
+        'Prepared project.',
         () => { }
     );
 
@@ -78,7 +63,7 @@ async function cleanFromYaml(
         command.execute(kraftChannel, kraftStatusBarItem);
     } catch (error) {
         showErrorMessage(kraftChannel, kraftStatusBarItem,
-            `[Error] Clean project ${error}.`
+            `[Error] Prepare project ${error}.`
         )
     }
 }

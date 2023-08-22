@@ -15,7 +15,8 @@ export async function kraftUpdate(
             env: Object.assign(
                 process.env)
         },
-        'Finished running kraft pkg update.'
+        'Finished running kraft pkg update.',
+        () => { }
     );
 
     showInfoMessage(kraftChannel, kraftStatusBarItem,

@@ -161,6 +161,21 @@
         "category": "Unikraft"
       },
       {
+        "command": "unikraft.properclean",
+        "title": "Properclean",
+        "category": "Unikraft"
+      },
+      {
+        "command": "unikraft.fetch",
+        "title": "Fetch",
+        "category": "Unikraft"
+      },
+      {
+        "command": "unikraft.prepare",
+        "title": "Prepare",
+        "category": "Unikraft"
+      },
+      {
         "command": "externalLibraries.addLibrary",
         "title": "Add library",
         "icon": {

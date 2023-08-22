@@ -49,10 +49,6 @@ async function buildFromYaml(
     }
     const targets = kraftYaml.targets.map((target: { architecture: any; platform: any; }) =>
         `${target.platform}-${target.architecture}`);
-    if (targets.length == 0) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Build error: No target found in Kraftfile.');
-        return;
-    }
     const target = await window.showQuickPick(
         targets,
         { placeHolder: 'Choose the target' }
@@ -76,7 +72,8 @@ async function buildFromYaml(
                 'KRAFTKIT_NO_CHECK_UPDATES': true
             }),
         },
-        'Built project.'
+        'Built project.',
+        () => { }
     );
 
     try {
