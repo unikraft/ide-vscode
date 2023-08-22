@@ -11,10 +11,13 @@ import { kraftBuild } from './commands/build';
 import { kraftRun } from './commands/run';
 import { kraftUpdate } from './commands/update';
 import { kraftClean } from './commands/clean';
+import { kraftProperclean } from './commands/properclean'
+import { kraftFetch } from './commands/fetch'
+import { kraftPrepare } from './commands/prepare';
 
 import { execSync } from 'child_process';
 import { env } from 'process';
-import { basename, join, win32 } from 'path';
+import { basename } from 'path';
 import { existsSync, readFileSync, rmSync } from 'fs';
 
 const commandExistsSync = require('command-exists').sync;
@@ -184,6 +187,18 @@ export class UnikraftExtension {
             'unikraft.clean',
             async () => kraftClean(this.kraftChannel, this.kraftStatusBarItem)
         );
+        const propercleanCommand = vscode.commands.registerCommand(
+            'unikraft.properclean',
+            async () => kraftProperclean(this.kraftChannel, this.kraftStatusBarItem)
+        );
+        const fetchCommand = vscode.commands.registerCommand(
+            'unikraft.fetch',
+            async () => kraftFetch(this.kraftChannel, this.kraftStatusBarItem)
+        );
+        const prepareCommand = vscode.commands.registerCommand(
+            'unikraft.prepare',
+            async () => kraftPrepare(this.kraftChannel, this.kraftStatusBarItem)
+        );
 
         const addLibraryCommand = vscode.commands.registerCommand(
             'externalLibraries.addLibrary',
@@ -214,6 +229,10 @@ export class UnikraftExtension {
         this.context.subscriptions.push(buildCommand);
         this.context.subscriptions.push(runCommand);
         this.context.subscriptions.push(updateCommand);
+        this.context.subscriptions.push(cleanCommand);
+        this.context.subscriptions.push(propercleanCommand);
+        this.context.subscriptions.push(fetchCommand);
+        this.context.subscriptions.push(prepareCommand);
         this.context.subscriptions.push(addLibraryCommand);
         this.context.subscriptions.push(removeLibraryCommand);
         this.context.subscriptions.push(purgeLibraryCommand);

@@ -18,7 +18,9 @@ export async function kraftInitialize(
     kraftChannel.show(true);
     const projectPath = getProjectPath();
     if (!projectPath) {
-        kraftChannel.appendLine('No workspace.');
+        showErrorMessage(kraftChannel, kraftStatusBarItem,
+            "No workspace."
+        )
         return;
     }
 
@@ -85,7 +87,8 @@ async function initializeApplication(
     // const commands = [new Command(
     //     'kraft pkg pull unikraft@staging',
     //     { cwd: projectPath, env: kraftEnv },
-    //     'Pulled unikraft.'
+    //     'Pulled unikraft.',
+    //      () => {}
     // )];
 
     // const template = await window.showQuickPick(
@@ -190,7 +193,8 @@ async function initializeLibrary(
     const commands = [new Command(
         'kraft pkg pull unikraft:staging',
         { cwd: projectPath, env: kraftEnv },
-        'Pulled unikraft.'
+        'Pulled unikraft.',
+        () => { }
     )];
 
     const libName = await window.showInputBox({
@@ -237,7 +241,8 @@ async function initializeLibrary(
         + ` --origin ${libOrigin}`
         + ` --project-name ${libName}`,
         { cwd: libsPath, env: kraftEnv },
-        `Initialized ${libName} library.`
+        `Initialized ${libName} library.`,
+        () => { }
     ));
 
     if (isProjectPathUnikraft) {

@@ -109,7 +109,7 @@ async function getTarget(
 	}
 	const targets: string[] = kraftYaml.targets
 		.map((target: { architecture: any; platform: any; }) =>
-		target.platform == "firecracker" ? `fc-${target.architecture}` : `${target.platform}-${target.architecture}`) 
+			target.platform == "firecracker" ? `fc-${target.architecture}` : `${target.platform}-${target.architecture}`)
 		.filter((target: string) =>
 			existsSync(join(
 				projectPath,
