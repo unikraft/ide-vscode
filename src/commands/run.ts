@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 import { OutputChannel, StatusBarItem, window, workspace } from 'vscode';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync } from 'fs';
 import { basename, join } from 'path';
 import { getProjectPath, getSourcesDir, getManifestsDir, getDefaultFileNames, showErrorMessage, getKraftYaml, showInfoMessage } from './utils';
 

@@ -156,6 +156,11 @@
         "category": "Unikraft"
       },
       {
+        "command": "unikraft.clean",
+        "title": "Clean",
+        "category": "Unikraft"
+      },
+      {
         "command": "externalLibraries.addLibrary",
         "title": "Add library",
         "icon": {
