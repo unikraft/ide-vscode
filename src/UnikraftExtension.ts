@@ -10,6 +10,7 @@ import { kraftConfigure } from './commands/configure';
 import { kraftBuild } from './commands/build';
 import { kraftRun } from './commands/run';
 import { kraftUpdate } from './commands/update';
+import { kraftClean } from './commands/clean';
 
 import { execSync } from 'child_process';
 import { env } from 'process';
@@ -178,6 +179,10 @@ export class UnikraftExtension {
         const updateCommand = vscode.commands.registerCommand(
             'unikraft.update',
             async () => kraftUpdate(this.kraftChannel, this.kraftStatusBarItem)
+        );
+        const cleanCommand = vscode.commands.registerCommand(
+            'unikraft.clean',
+            async () => kraftClean(this.kraftChannel, this.kraftStatusBarItem)
         );
 
         const addLibraryCommand = vscode.commands.registerCommand(

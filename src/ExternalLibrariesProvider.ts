@@ -8,7 +8,6 @@ import {
 	getProjectPath, refreshViews, removeCore, getSourcesDir, getManifestsDir, showErrorMessage, getKraftYaml, getKraftYamlPath, removeCoreProjectDir, showInfoMessage
 } from './commands/utils';
 import { Command } from './commands/Command';
-import { string } from 'yaml/dist/schema/common/string';
 
 const yaml = require('js-yaml');
 const YAML = require('yaml')
