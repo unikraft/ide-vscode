@@ -38,7 +38,7 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 
 	public set manifestsDir(value: string) {
 		this._manifestsDir = value;
-		this.kraftEnv['KRAFTKIT_PATHS_MANIFESTS'] = value
+		this.kraftEnv['KRAFTKIT_PATHS_MANIFESTS'] = value;
 	}
 
 	private kraftEnv = Object.assign(

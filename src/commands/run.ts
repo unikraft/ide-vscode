@@ -24,50 +24,7 @@ export async function kraftRun(
 	}
 	const splitTarget = target.split('-');
 
-	var runArgs = `--plat ${splitTarget[0]} -m ${splitTarget[1]}`;
-
-	const symbolic = workspace.getConfiguration().get('unikraft.symbolic', false);
-	if (symbolic) {
-		runArgs += ' --symbolic';
-	}
-
-	const disableAccel = workspace.getConfiguration().get('unikraft.disableAccel', false);
-	if (disableAccel) {
-		runArgs += ' -W';
-	}
-
-	const detach = workspace.getConfiguration().get('unikraft.detach', false);
-	if (detach) {
-		runArgs += ' -d';
-	}
-
-	const remove = workspace.getConfiguration().get('unikraft.remove', false);
-	if (remove) {
-		runArgs += ' --rm';
-	}
-
-	const ip = workspace.getConfiguration().get('unikraft.ip', '');
-	if (ip !== '') {
-		runArgs += ' --ip ' + ip;
-	}
-
-	const network = workspace.getConfiguration().get('unikraft.network', '');
-	if (network !== '') {
-		runArgs += ' --network ' + network;
-	}
-
-	const memory = workspace.getConfiguration().get('unikraft.memory', '');
-	if (memory !== '') {
-		runArgs += ' -M ' + memory;
-	}
-
-	const ports = workspace.getConfiguration().get('unikraft.ports', []);
-	if (ports.length > 0) {
-		runArgs += ' --port';
-		ports.forEach(element => {
-			runArgs += " " + element;
-		});
-	}
+	let runArgs = `--plat ${splitTarget[0]} -m ${splitTarget[1]}` + getAllRunArgs();
 
 	showInfoMessage(kraftChannel, kraftStatusBarItem,
 		"Running project..."
@@ -133,4 +90,85 @@ async function getTarget(
 	);
 
 	return target;
+}
+
+function getAllRunArgs(): string {
+	let runArgs: string = "";
+	const detach = workspace.getConfiguration().get('unikraft.run.detach', false);
+	if (detach) {
+		runArgs += ' -d';
+	}
+
+	const disableAcceleration = workspace.getConfiguration().get('unikraft.run.disableAcceleration', false);
+	if (disableAcceleration) {
+		runArgs += ' -W';
+	}
+
+	const initrd = workspace.getConfiguration().get('unikraft.run.initrd', "");
+	if (initrd !== '') {
+		runArgs += ' --initrd ' + initrd;
+	}
+
+	const ip = workspace.getConfiguration().get('unikraft.run.ip', '');
+	if (ip !== '') {
+		runArgs += ' --ip ' + ip;
+	}
+
+	const kernelArgs = workspace.getConfiguration().get('unikraft.run.kernelArguments', []);
+	if (kernelArgs.length > 0) {
+		runArgs += ' --kernel-arg';
+		kernelArgs.forEach(element => {
+			runArgs += " " + element;
+		});
+	}
+
+	const macAddress = workspace.getConfiguration().get('unikraft.run.macAddress', '');
+	if (macAddress !== '') {
+		runArgs += ' --mac ' + macAddress;
+	}
+
+	const memory = workspace.getConfiguration().get('unikraft.run.memory', '');
+	if (memory !== '') {
+		runArgs += ' -M ' + memory;
+	}
+
+	const name = workspace.getConfiguration().get('unikraft.run.name', '');
+	if (name !== '') {
+		runArgs += ' --name ' + name;
+	}
+
+	const network = workspace.getConfiguration().get('unikraft.run.network', '');
+	if (network !== '') {
+		runArgs += ' --network ' + network;
+	}
+
+	const ports = workspace.getConfiguration().get('unikraft.run.ports', []);
+	if (ports.length > 0) {
+		runArgs += ' --port';
+		ports.forEach(element => {
+			runArgs += " " + element;
+		});
+	}
+
+	const remove = workspace.getConfiguration().get('unikraft.run.remove', false);
+	if (remove) {
+		runArgs += ' --rm';
+	}
+
+	const as = workspace.getConfiguration().get('unikraft.run.as', '');
+	if (as !== '') {
+		runArgs += ' --as ' + as;
+	}
+
+	const volume = workspace.getConfiguration().get('unikraft.run.volume', '');
+	if (volume !== '') {
+		runArgs += ' --volume ' + volume;
+	}
+
+	const symbolic = workspace.getConfiguration().get('unikraft.run.symbolic', false);
+	if (symbolic) {
+		runArgs += ' --symbolic';
+	}
+
+	return runArgs
 }

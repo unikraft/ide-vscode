@@ -37,7 +37,7 @@ async function fetchFromYaml(
         { placeHolder: 'Choose the target' }
     );
     if (!target) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Fetch error: No target chose.');
+        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Fetch error: No target chosen.');
         return;
     }
 

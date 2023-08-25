@@ -34,55 +34,141 @@
       "type": "object",
       "title": "Unikraft",
       "properties": {
-        "unikraft.sources": {
-          "type": "string",
-          "default": "",
-          "description": "Specifies the directory where all the packages are stored, By default it is set by environment variable KRAFTKIT_PATHS_SOURCES or file `$HOME/.config/kraftkit/config.yaml`."
-        },
-        "unikraft.manifests": {
-          "type": "string",
-          "default": "",
-          "description": "Specifies the directory where all the manifests are stored, By default it is set by environment variable KRAFTKIT_PATHS_MANIFESTS or file `$HOME/.config/kraftkit/config.yaml`."
-        },
-        "unikraft.detach": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether to run unikernel in background"
-        },
-        "unikraft.disableAccel": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether to disable acceleration of CPU (usually enables TCG)"
-        },
-        "unikraft.symbolic": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether to use the debuggable (symbolic) unikernel"
-        },
-        "unikraft.remove": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether to automatically remove the unikernel when it shutsdown"
-        },
-        "unikraft.ip": {
-          "type": "string",
-          "default": "",
-          "description": "Assign the provided IP address"
-        },
-        "unikraft.memory": {
-          "type": "string",
-          "default": "64M",
-          "description": "Assign MB memory to the unikernel"
-        },
-        "unikraft.network": {
-          "type": "string",
-          "default": "",
-          "description": "Attach instance to the provided network in the format <driver>:<network>"
-        },
-        "unikraft.ports": {
-          "type": "array",
-          "default": [],
-          "description": "Publish a machine's port(s) to the host"
+        "unikraft": {
+          "sources": {
+            "type": "string",
+            "default": "",
+            "description": "Specifies the directory where all the packages are stored, By default it is set by environment variable KRAFTKIT_PATHS_SOURCES or file `$HOME/.config/kraftkit/config.yaml`."
+          },
+          "manifests": {
+            "type": "string",
+            "default": "",
+            "description": "Specifies the directory where all the manifests are stored, By default it is set by environment variable KRAFTKIT_PATHS_MANIFESTS or file `$HOME/.config/kraftkit/config.yaml`."
+          },
+          "run": {
+            "detach": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether to run unikernel in background"
+            },
+            "disableAcceleration": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether to disable acceleration of CPU (usually enables TCG)"
+            },
+            "initrd": {
+              "type": "string",
+              "default": "",
+              "description": "Whether to run specified initrd unikernel"
+            },
+            "ip": {
+              "type": "string",
+              "default": "",
+              "description": "Assign the provided IP address"
+            },
+            "kernelArguments": {
+              "type": "array",
+              "default": [],
+              "description": "Set additional kernel arguments"
+            },
+            "macAddress": {
+              "type": "string",
+              "default": "",
+              "description": "Assign the provided MAC address"
+            },
+            "memory": {
+              "type": "string",
+              "default": "64M",
+              "description": "Assign MB memory to the unikernel"
+            },
+            "name": {
+              "type": "string",
+              "default": "",
+              "description": "Name of the instance"
+            },
+            "network": {
+              "type": "string",
+              "default": "",
+              "description": "Attach instance to the provided network in the format <driver>:<network>"
+            },
+            "ports": {
+              "type": "array",
+              "default": [],
+              "description": "Publish a machine's port(s) to the host"
+            },
+            "remove": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether to automatically remove the unikernel when it shutsdown"
+            },
+            "as": {
+              "type": "string",
+              "default": "",
+              "description": "Force a specific runner"
+            },
+            "volume": {
+              "type": "string",
+              "default": "",
+              "description": "Bind a volume to the instance"
+            },
+            "symbolic": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether to use the debuggable (symbolic) unikernel"
+            }
+          },
+          "build": {
+            "config": {
+              "type": "string",
+              "default": "",
+              "description": "Override the path to the KConfig .config file"
+            },
+            "jobs": {
+              "type": "integer",
+              "default": 0,
+              "description": "Allow N jobs at once"
+            },
+            "dbg": {
+              "type": "boolean",
+              "default": false,
+              "description": "Build the debuggable (symbolic) kernel image instead of the stripped image"
+            },
+            "noCache": {
+              "type": "boolean",
+              "default": false,
+              "description": "Force a rebuild even if existing intermediate artifacts already exist"
+            },
+            "noConfigure": {
+              "type": "boolean",
+              "default": false,
+              "description": "Do not run Unikraft's configure step before building"
+            },
+            "noFast": {
+              "type": "boolean",
+              "default": false,
+              "description": "Do not use maximum parallelization when performing the build"
+            },
+            "noFetch": {
+              "type": "boolean",
+              "default": false,
+              "description": "Do not run Unikraft's fetch step before building"
+            },
+            "noPull": {
+              "type": "boolean",
+              "default": false,
+              "description": "Do not pull packages before invoking Unikraft's build system"
+            },
+            "noUpdate": {
+              "type": "boolean",
+              "default": false,
+              "description": "Do not update package index before running the build"
+            },
+            "buildLog": {
+              "type": "string",
+              "default": "",
+              "description": "Use the specified file to save the output from the build"
+            }
+          }
         }
       }
     },
