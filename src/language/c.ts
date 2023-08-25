@@ -32,15 +32,21 @@ export async function reloadIncludes(projectPath?: string) {
     );
 }
 
-export async function reloadConfig(projectPath?: string) {
+export async function reloadConfig(projectPath: string, changedFile?: string) {
     if (!projectPath) {
         return;
     }
 
     const kraftConfig = getKraftYamlConfig(projectPath);
-    const dotConfig = getDotConfig(projectPath);
+    let config: string[] = [];
+    if (changedFile) {
+        const dotConfig = getDotConfig(projectPath, changedFile);
+        config = kraftConfig.concat(dotConfig);
+    } else {
+        config = kraftConfig;
+    }
 
-    const config = kraftConfig.concat(dotConfig)
+    config = config
         .filter((def: string) => def.split('=')[1] === 'y')
         .map((def: string) => def.split('=')[0]);
 
@@ -101,8 +107,8 @@ function getKraftYamlConfig(projectPath: string): string[] {
     return kraftLibs.concat(ukConfig);
 }
 
-function getDotConfig(projectPath: string): string[] {
-    const configFile = join(projectPath, '.config');
+function getDotConfig(projectPath: string, changedFile: string): string[] {
+    const configFile = join(projectPath, changedFile);
     if (!existsSync(configFile)) {
         return [];
     }

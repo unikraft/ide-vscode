@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 import * as vscode from 'vscode';
-import { getProjectPath, getSourcesDir, getManifestsDir, showErrorMessage } from './commands/utils';
+import { getProjectPath, getSourcesDir, getManifestsDir, showErrorMessage, getDefaultFileNames } from './commands/utils';
 import { reloadConfig, reloadIncludes } from './language/c';
 import { setupPythonSupport } from './language/python';
 import { ExternalLibrariesProvider, Library } from './ExternalLibrariesProvider';
@@ -91,15 +91,26 @@ export class UnikraftExtension {
         });
 
         vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
-            if (basename(document.fileName) === 'kraft.yaml') {
-                const projectPath = getProjectPath();
+            let isKraftfile: boolean = false;
+            let fileName: string = basename(document.fileName);
+            const projectPath = getProjectPath();
+            if (!projectPath) {
+                return
+            }
+            getDefaultFileNames().forEach(file => {
+                if (file === fileName) {
+                    isKraftfile = true;
+                }
+            })
+
+            if (isKraftfile) {
                 setupPythonSupport(projectPath);
                 reloadIncludes(projectPath);
                 reloadConfig(projectPath);
             }
 
-            if (basename(document.fileName) === '.config') {
-                reloadConfig(getProjectPath());
+            if (fileName.startsWith('.config')) {
+                reloadConfig(projectPath, fileName);
             }
         });
     }

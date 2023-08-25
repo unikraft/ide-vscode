@@ -102,7 +102,7 @@ The CLI `kraft` is also required:
 curl --proto '=https' --tlsv1.2 -sSf https://get.kraftkit.sh | sh
 ```
 
-These are automatically installed if the `Kraftkit` is not installed on this system.
+These are automatically installed if `Kraftkit` is not installed on this system.
 
 ## Extension Settings
 

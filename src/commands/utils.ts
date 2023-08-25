@@ -99,7 +99,7 @@ export function removeCoreProjectDir(
         showErrorMessage(
             kraftChannel,
             kraftStatusBarItem,
-            "unikraft core is not present in the project"
+            "Unikraft core is not present in the project."
         );
     }
 }
