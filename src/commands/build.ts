@@ -2,9 +2,14 @@
 
 import { OutputChannel, StatusBarItem, window, workspace } from 'vscode';
 import { Command } from './Command';
-import { getProjectPath, showErrorMessage, getSourcesDir, getManifestsDir, getKraftYaml, showInfoMessage } from './utils';
-
-const yaml = require('js-yaml');
+import {
+    getProjectPath,
+    showErrorMessage,
+    getSourcesDir,
+    getManifestsDir,
+    showInfoMessage,
+    fetchTargetsFromKraftYaml
+} from './utils';
 
 export async function kraftBuild(
     kraftChannel: OutputChannel,
@@ -18,52 +23,53 @@ export async function kraftBuild(
         return;
     }
 
+    const targets = fetchTargetsFromKraftYaml(
+        kraftChannel,
+        kraftStatusBarItem,
+        projectPath
+    );
+    if (!targets) {
+        return;
+    }
+    const target = await window.showQuickPick(
+        targets,
+        { placeHolder: 'Choose the target' }
+    );
+    if (!target) {
+        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Build error: No target chosen.');
+        return;
+    }
+    const splitTarget = target.split('-');
+
     const type = await window.showQuickPick(
         [
-            'Build using interactive CLI',
-            'Build from Kraftfile'
+            'Build in interactive mode',
+            'Build in non-interactive mode'
         ],
         { placeHolder: 'Configuration type' }
     );
 
     showInfoMessage(kraftChannel, kraftStatusBarItem,
         "Building project..."
-    )
+    );
 
-    if (type === 'Build from Kraftfile') {
-        buildFromYaml(kraftChannel, kraftStatusBarItem, projectPath);
+    if (type === 'Build in non-interactive mode') {
+        buildNonInteractively(kraftChannel, kraftStatusBarItem, splitTarget, projectPath);
     } else {
-        buildInteractively(projectPath);
+        buildInteractively(splitTarget, projectPath);
     }
 }
 
-async function buildFromYaml(
+async function buildNonInteractively(
     kraftChannel: OutputChannel,
     kraftStatusBarItem: StatusBarItem,
+    splitTarget: string[],
     projectPath: string
 ) {
-    const kraftYaml = getKraftYaml(projectPath);
-    if (kraftYaml.targets == undefined || kraftYaml.targets.length == 0) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Build error: No target found in Kraftfile.');
-        return;
-    }
-    const targets = kraftYaml.targets.map((target: { architecture: any; platform: any; }) =>
-        `${target.platform}-${target.architecture}`);
-    const target = await window.showQuickPick(
-        targets,
-        { placeHolder: 'Choose the target' }
-    );
-    if (!target) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Build error: No target chose.');
-        return;
-    }
-
-    const splitTarget = target.split('-');
-
-    let sourcesDir = getSourcesDir();
-    let manifestsDir = getManifestsDir();
+    const sourcesDir = getSourcesDir();
+    const manifestsDir = getManifestsDir();
     const command = new Command(
-        `kraft build -p ${splitTarget[0]} -m ${splitTarget[1]} ${getAllBuildArgs().trim()}`,
+        `kraft build --log-type=json -p ${splitTarget[0]} -m ${splitTarget[1]} ${getAllBuildArgs().trim()}`,
         {
             cwd: projectPath,
             env: Object.assign(process.env, {
@@ -85,10 +91,10 @@ async function buildFromYaml(
     }
 }
 
-async function buildInteractively(projectPath: string) {
-    let sourcesDir = getSourcesDir();
-    let manifestsDir = getManifestsDir();
-    let terminal = window.createTerminal({
+async function buildInteractively(splitTarget: string[], projectPath: string) {
+    const sourcesDir = getSourcesDir();
+    const manifestsDir = getManifestsDir();
+    const terminal = window.createTerminal({
         name: "kraft build",
         cwd: projectPath,
         hideFromUser: false,
@@ -99,13 +105,13 @@ async function buildInteractively(projectPath: string) {
         })
     });
     terminal.show();
-    terminal.sendText(`kraft build ${getAllBuildArgs().trim()} 2> /tmp/err_kraft_build`);
+    terminal.sendText(`kraft build  -p ${splitTarget[0]} -m ${splitTarget[1]} ${getAllBuildArgs().trim()} 2> /tmp/err_kraft_build`);
 }
 
 function getAllBuildArgs(): string {
     let buildArgs: string = "";
     const config = workspace.getConfiguration().get('unikraft.build.config', "");
-    if (config !== "") {
+    if (config !== null && config !== "") {
         buildArgs += ' --config ' + config;
     }
 
@@ -139,9 +145,9 @@ function getAllBuildArgs(): string {
         buildArgs += ' --no-fetch';
     }
 
-    const noPull = workspace.getConfiguration().get('unikraft.build.noPull', false);
-    if (noPull) {
-        buildArgs += ' --no-pull';
+    const forcePull = workspace.getConfiguration().get('unikraft.build.forcePull', false);
+    if (forcePull) {
+        buildArgs += ' --force-pull';
     }
 
     const noUpdate = workspace.getConfiguration().get('unikraft.build.noUpdate', false);
@@ -149,8 +155,8 @@ function getAllBuildArgs(): string {
         buildArgs += ' --no-update';
     }
 
-    const buildLog = workspace.getConfiguration().get('unikraft.build.buildLog', '');
-    if (buildLog !== "") {
+    const buildLog = workspace.getConfiguration().get('unikraft.build.buildLog', "");
+    if (buildLog !== null && buildLog !== "") {
         buildArgs += ' --build-log ' + buildLog;
     }
     return buildArgs

@@ -10,7 +10,7 @@ export async function kraftUpdate(
 ) {
     kraftChannel.show(true);
     const command = new Command(
-        `kraft pkg update`,
+        `kraft pkg update --log-type=json`,
         {
             env: Object.assign(
                 process.env)

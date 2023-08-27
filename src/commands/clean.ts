@@ -1,8 +1,13 @@
-import { OutputChannel, StatusBarItem, window } from 'vscode';
+import { OutputChannel, StatusBarItem } from 'vscode';
 import { Command } from './Command';
-import { existsSync } from 'fs';
-import { basename, join } from 'path';
-import { getProjectPath, showErrorMessage, getSourcesDir, getManifestsDir, getKraftYaml, showInfoMessage } from './utils';
+import {
+    getProjectPath,
+    showErrorMessage,
+    getSourcesDir,
+    getManifestsDir,
+    getTarget,
+    showInfoMessage
+} from './utils';
 
 export async function kraftClean(
     kraftChannel: OutputChannel,
@@ -14,11 +19,9 @@ export async function kraftClean(
         showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No workspace.');
         return;
     }
-
     showInfoMessage(kraftChannel, kraftStatusBarItem,
         "Cleaning project..."
     )
-
     cleanFromYaml(kraftChannel, kraftStatusBarItem, projectPath);
 }
 
@@ -27,41 +30,20 @@ async function cleanFromYaml(
     kraftStatusBarItem: StatusBarItem,
     projectPath: string
 ) {
-    const kraftYaml = getKraftYaml(projectPath);
-    if (kraftYaml.targets == undefined || kraftYaml.targets.length == 0) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No target found in Kraftfile.');
-        return;
-    }
-    const targets = kraftYaml.targets.map((target: { architecture: any; platform: any; }) =>
-        target.platform == "firecracker" ? `fc-${target.architecture}` : `${target.platform}-${target.architecture}`)
-        .filter((target: string) =>
-            existsSync(join(
-                projectPath,
-                '.unikraft',
-                'build',
-                `${basename(projectPath)}_${target}`
-            )
-            )
-        );
-    if (targets.length == 0) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No matching target found.');
-        return;
-    }
-    const target = await window.showQuickPick(
-        targets,
-        { placeHolder: 'Choose the target' }
+    const target = await getTarget(
+        kraftChannel,
+        kraftStatusBarItem,
+        projectPath
     );
     if (!target) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No target chose.');
+        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No target chosen.');
         return;
     }
-
     const splitTarget = target.split('-');
-
-    let sourcesDir = getSourcesDir();
-    let manifestsDir = getManifestsDir();
+    const sourcesDir = getSourcesDir();
+    const manifestsDir = getManifestsDir();
     const command = new Command(
-        `kraft clean -p ${splitTarget[0]} -m ${splitTarget[1]}`,
+        `kraft clean --log-type=json -p ${splitTarget[0]} -m ${splitTarget[1]}`,
         {
             cwd: projectPath,
             env: Object.assign(process.env, {

@@ -1,7 +1,13 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 import { OutputChannel, StatusBarItem, window } from 'vscode';
-import { getProjectPath, showErrorMessage, getSourcesDir, getManifestsDir, showInfoMessage } from './utils';
+import {
+    getProjectPath,
+    showErrorMessage,
+    getSourcesDir,
+    getManifestsDir,
+    showInfoMessage
+} from './utils';
 
 export async function kraftConfigure(
     kraftChannel: OutputChannel,
@@ -10,8 +16,8 @@ export async function kraftConfigure(
     kraftChannel.show(true);
     // TODO: automatically update kraft.yaml syntax using a kraft command
     const projectPath = getProjectPath();
-    let sourceDir = getSourcesDir()
-    let manifestsDir = getManifestsDir()
+    const sourceDir = getSourcesDir()
+    const manifestsDir = getManifestsDir()
     if (!projectPath) {
         showErrorMessage(kraftChannel, kraftStatusBarItem, 'Configure error: No workspace.')
         return;
@@ -22,7 +28,7 @@ export async function kraftConfigure(
     )
 
     try {
-        let terminal = window.createTerminal({
+        const terminal = window.createTerminal({
             name: "kraft menu",
             cwd: projectPath,
             hideFromUser: false,

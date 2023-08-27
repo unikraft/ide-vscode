@@ -1,7 +1,14 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 import * as vscode from 'vscode';
-import { getProjectPath, getSourcesDir, getManifestsDir, showErrorMessage, getDefaultFileNames } from './commands/utils';
+import {
+    getProjectPath,
+    getSourcesDir,
+    getManifestsDir,
+    showErrorMessage,
+    getDefaultFileNames,
+    refreshViews
+} from './commands/utils';
 import { reloadConfig, reloadIncludes } from './language/c';
 import { setupPythonSupport } from './language/python';
 import { ExternalLibrariesProvider, Library } from './ExternalLibrariesProvider';
@@ -12,15 +19,11 @@ import { kraftRun } from './commands/run';
 import { kraftUpdate } from './commands/update';
 import { kraftClean } from './commands/clean';
 import { kraftProperclean } from './commands/properclean'
-import { kraftFetch } from './commands/fetch'
-import { kraftPrepare } from './commands/prepare';
-
 import { execSync } from 'child_process';
 import { env } from 'process';
 import { basename } from 'path';
 import { existsSync, readFileSync, rmSync } from 'fs';
-
-const commandExistsSync = require('command-exists').sync;
+import { sync as commandExistsSync } from 'command-exists';
 
 export class UnikraftExtension {
     constructor(private context: vscode.ExtensionContext) { }
@@ -41,7 +44,7 @@ export class UnikraftExtension {
         await this.setupExtension();
     }
 
-    private postSetup() {
+    private externalLibSetup() {
         const externalLibrariesTreeView = vscode.window.registerTreeDataProvider(
             'externalLibraries',
             this.externalLibrariesProvider
@@ -50,21 +53,24 @@ export class UnikraftExtension {
         this.context.subscriptions.push(externalLibrariesTreeView);
         this.context.subscriptions.push(this.kraftStatusBarItem);
         this.kraftStatusBarItem.show();
+    }
 
-
+    private postSetup() {
         vscode.window.onDidCloseTerminal(t => {
+            this.externalLibSetup();
             if (t.exitStatus) {
                 if (t.name === 'Kraft setup') {
+                    this.kraftChannel.show(true)
                     this.kraftChannel.appendLine('Installed kraft.');
                     this.kraftStatusBarItem.text = 'Installed kraft.';
                     this.kraftChannel.appendLine('Executing "kraft pkg update"...');
                     this.kraftChannel.appendLine(execSync(
-                        'kraft pkg update',
+                        'kraft pkg update --log-type=json',
                         { env: env }
                     ).toString()
                     );
                     this.kraftChannel.appendLine('Executed "kraft pkg update".');
-                    this.initExtension()
+                    this.initExtension();
                 }
 
                 if (t.name === 'kraft run') {
@@ -91,8 +97,9 @@ export class UnikraftExtension {
         });
 
         vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
+            this.externalLibSetup();
             let isKraftfile: boolean = false;
-            let fileName: string = basename(document.fileName);
+            const fileName: string = basename(document.fileName);
             const projectPath = getProjectPath();
             if (!projectPath) {
                 return
@@ -121,11 +128,12 @@ export class UnikraftExtension {
         vscode.window.showInformationMessage(
             'Congratulations, your extension "Unikraft" is now active!'
         );
+        refreshViews();
     }
 
     private async setupExtension() {
         if (!commandExistsSync('kraft')) {
-            vscode.window.showInformationMessage('Do you want to install Kraftkit ?', "Install", "Cancel")
+            vscode.window.showInformationMessage('Do you want to install Kraftkit?', "Install", "Cancel")
                 .then((result) => {
                     if (result == "Install") {
                         this.installKraft();
@@ -139,7 +147,8 @@ export class UnikraftExtension {
                 });
         } else {
             this.initExtension();
-            this.postSetup()
+            this.externalLibSetup();
+            this.postSetup();
         }
     }
 
@@ -148,23 +157,10 @@ export class UnikraftExtension {
 
         this.kraftStatusBarItem.text = 'Installing kraft...';
         this.kraftChannel.appendLine('Installing kraft...');
-        terminal.sendText(`sudo apt-get install -y --no-install-recommends build-essential \
-        libncurses-dev \
-        libyaml-dev \
-        flex \
-        wget \
-        socat \
-        bison \
-        unzip \
-        uuid-runtime \
-        python3 \
-        python3-setuptools \
-        python3-pip \
-        qemu-kvm \
-        qemu-system-x86 \
-        qemu-system-arm \
-        sgabios \
-        curl && curl --proto '=https' --tlsv1.2 -sSf https://get.kraftkit.sh | sh && exit`);
+        terminal.sendText(
+            `curl --proto '=https' --tlsv1.2 -sSf https://get.kraftkit.sh | sh && exit`
+        );
+        terminal.show(true)
     }
 
     private registerCommands() {
@@ -202,14 +198,6 @@ export class UnikraftExtension {
             'unikraft.properclean',
             async () => kraftProperclean(this.kraftChannel, this.kraftStatusBarItem)
         );
-        const fetchCommand = vscode.commands.registerCommand(
-            'unikraft.fetch',
-            async () => kraftFetch(this.kraftChannel, this.kraftStatusBarItem)
-        );
-        const prepareCommand = vscode.commands.registerCommand(
-            'unikraft.prepare',
-            async () => kraftPrepare(this.kraftChannel, this.kraftStatusBarItem)
-        );
 
         const addLibraryCommand = vscode.commands.registerCommand(
             'externalLibraries.addLibrary',
@@ -242,8 +230,6 @@ export class UnikraftExtension {
         this.context.subscriptions.push(updateCommand);
         this.context.subscriptions.push(cleanCommand);
         this.context.subscriptions.push(propercleanCommand);
-        this.context.subscriptions.push(fetchCommand);
-        this.context.subscriptions.push(prepareCommand);
         this.context.subscriptions.push(addLibraryCommand);
         this.context.subscriptions.push(removeLibraryCommand);
         this.context.subscriptions.push(purgeLibraryCommand);
