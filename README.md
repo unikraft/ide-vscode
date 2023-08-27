@@ -21,6 +21,7 @@ An application can have 2 layouts:
 #### Library
 
 The user has to provide the extension with the following information in order to initialize a library:
+* path (where to create library).
 * library name
 * origin
 * version
@@ -29,19 +30,49 @@ The user has to provide the extension with the following information in order to
 
 The Unikraft hierarchy will be in `./.unikraft`, the library source code will be in `./unikraft/libs/$lib_name`, whereas the application for testing the library will be in the opened directory.
 
+![Creating library](https://github.com/unikraft/ide-vscode/blob/prototype/media/creating-library.gif)
+
 ### Project configuration
 
 The command `Unikraft: Configure project` from the command palette allows configuring the project interactively by opening a terminal with `menu`.
 
+### Project fetching
+
+The command `Unikraft: Fetch` from the command palette allows fetching dependecies for the project.
+
+![Fetching](https://github.com/unikraft/ide-vscode/blob/prototype/media/fetching.gif)
+
+### Project preparing
+
+The command `Unikraft: Prepare` from the command palette prepare the project to build.
+
+![Preparing](https://github.com/unikraft/ide-vscode/blob/prototype/media/preparing.gif)
+
 ### Project building
 
 The command `Unikraft: Build project` from the command palette builds the unikernel based on the configuration file.
+
+![Building project](https://github.com/unikraft/ide-vscode/blob/prototype/media/building.gif)
 
 ### Project running
 
 The command `Unikraft: Run project` from the command palette runs the built unikernel in a new terminal.
 
 If there are multiple images, the user has to choose one of them.
+
+![Running project](https://github.com/unikraft/ide-vscode/blob/prototype/media/running.gif)
+
+### Project cleaning
+
+The command `Unikraft: Clean` from the command palette clean a built project.
+
+![Cleaning project](https://github.com/unikraft/ide-vscode/blob/prototype/media/cleaning.gif)
+
+### Project propercleaning
+
+The command `Unikraft: Properclean` from the command palette clean all the builts project properly.
+
+![Propercleaning project](https://github.com/unikraft/ide-vscode/blob/prototype/media/proper-cleaning.gif)
 
 ### External dependencies inspection
 
@@ -55,6 +86,10 @@ The `External libraries` view allows inspecting various types of external librar
 A new library and core can be added to the project from this view by clicking the `+` button and selecting the library and its version from a drop-down list.
 
 A library can either be removed from the project (it will still be stored on disk) or purged by clicking right on it.
+
+### Removing and purging external libraries
+
+![Removing & purging libraries](https://github.com/unikraft/ide-vscode/blob/prototype/media/removing-purging-library.gif)
 
 ### Intellisense
 
@@ -76,48 +111,64 @@ A `.env` file is created and it contains the path to the Python source code. How
 
 ## Requirements
 
-The following packages are required for `kraft`:
-```
-sudo apt-get install -y --no-install-recommends build-essential \
-  libncurses-dev \
-  libyaml-dev \
-  flex \
-  wget \
-  socat \
-  bison \
-  unzip \
-  uuid-runtime \
-  python3 \
-  python3-setuptools \
-  python3-pip \
-  qemu-kvm \
-  qemu-system-x86 \
-  qemu-system-arm \
-  sgabios \
-  curl
-```
+The following packages are required for `kraft` and these are automatically installed with `Kraft` if not installed on this system:
 
-The CLI `kraft` is also required:
-```
+* bison
+* build-essential
+* flex
+* git
+* libncurses-dev
+* qemu-system
+* socat
+* unzip
+* wget
+
+The CLI `kraft` can be installed via:
+
+```sh
 curl --proto '=https' --tlsv1.2 -sSf https://get.kraftkit.sh | sh
 ```
-
-These are automatically installed if `Kraftkit` is not installed on this system.
 
 ## Extension Settings
 
 This extension contributes the following settings:
 
+**Kraftkit path configurations**
 * `unikraft.sources`: Sets the environment variable `KRAFTKIT_PATHS_SOURCES` by default set by `~/.config/kraftkit/config.yaml` or ENV `KRAFTKIT_PATHS_SOURCES` that is further used by extension for `kraft` commands.
 * `unikraft.manifests`: Sets the environment variable `KRAFTKIT_PATHS_MANIFESTS` by default set by `~/.config/kraftkit/config.yaml` or ENV `KRAFTKIT_PATHS_MANIFESTS` that is further used by extension for `kraft` commands.
-* `unikraft.detach`: Whether to run unikernel in background (default is False).
-* `unikraft.disableAccel`: Whether to disable acceleration of CPU (usually enables TCG) when running `kraft run` (default is False).
-* `unikraft.symbolic`: Whether to use the debuggable (symbolic) unikernel when running `kraft run` (default is False).
-* `unikraft.remove`: Whether to automatically remove the unikernel when it shutsdown (default is False).
-* `unikraft.ip`: Assign the provided IP address when running `kraft run`.
-* `unikraft.memory`: Assign MB memory to the unikernel (default is 64M) when running.
-* `unikraft.network`: Attach instance to the provided network in the format `<driver>:<network>` when running `kraft run`.
-* `unikraft.ports`: Publish a machine's port(s) to the host (An array of strings e.g ["8080"]) when running `kraft run`.
+
+**Run command configurations**
+* `unikraft.run.detach`: Whether to run unikernel in background (default is False).
+* `unikraft.run.disableAccel`: Whether to disable acceleration of CPU (usually enables TCG) when running `kraft run` (default is False).
+* `unikraft.run.initrd`: Whether to use the specified path as an initrd.
+* `unikraft.run.ip`: Assign the provided IP address when running `kraft run`.
+* `unikraft.run.kernelArguments`: Sets additional kernel arguments.
+* `unikraft.run.macAddress`: Assign the provided MAC address.
+* `unikraft.run.memory`: Assign memory to the unikernel when running (default is 64M).
+* `unikraft.run.name`: Name of the instance.
+* `unikraft.run.network`: Attach instance to the provided network in the format `<driver>:<network>` when running `kraft run`.
+* `unikraft.run.ports`: Publish a machine's port(s) to the host (An array of strings e.g ["8080"]) when running `kraft run`.
+* `unikraft.run.remove`: Whether to automatically remove the unikernel when it shutsdown (default is False).
+* `unikraft.run.as`: Force a specific runner.
+* `unikraft.run.volume`: Bind a volume to the instance.
+* `unikraft.run.symbolic`: Whether to use the debuggable (symbolic) unikernel when running `kraft run` (default is False).
+
+**Build command configurations**
+* `unikraft.build.config`: Override the path to the KConfig .config file.
+* `unikraft.build.jobs`:  Allow N jobs at once (default is 0).
+* `unikraft.build.dbg`: Build the debuggable (symbolic) kernel image instead of the stripped image (default is False).
+* `unikraft.build.noCache`: Force a rebuild even if existing intermediate artifacts already exist (default is False).
+* `unikraft.build.noConfigure`: Do not run Unikraft's configure step before building (default is False).
+* `unikraft.build.noFast`: Do not use maximum parallelization when performing the build (default is False).
+* `unikraft.build.noFetch`: Do not run Unikraft's fetch step before building (default is False).
+* `unikraft.build.forcePull`: Force pulling packages before building (default is False).
+* `unikraft.build.noUpdate`: Do not update package index before running the build (default is False).
+* `unikraft.build.buildLog`: Use the specified file to save the output from the build.
+
+**Initialize command configurations**
+* `unikraft.initialize.library.noProvideCMain`: Do not provide provide main to the template (default is False).
+* `unikraft.initialize.library.gitInit`: Init git through the creating library (default is True).
+* `unikraft.initialize.library.withPatchdir`: provide patch directory to the template (default is False).
 
 ![helloworld](https://github.com/unikraft/ide-vscode/blob/prototype/media/httpreply.gif)
 

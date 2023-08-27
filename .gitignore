@@ -44,3 +44,6 @@ yarn.lock
 out
 *.vsix
 package-lock.json
+
+# Test
+.vscode-test

@@ -8,4 +8,4 @@ export async function activate(context: ExtensionContext) {
 	unikraftExtension.activate();
 }
 
-export function deactivate() {}
+export function deactivate() { }

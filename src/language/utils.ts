@@ -3,9 +3,7 @@
 import { join } from 'path';
 import { existsSync, readdirSync, readFileSync, statSync } from "fs";
 import * as utils from './../commands/utils';
-
-
-const yaml = require('js-yaml');
+import { load as yamlLoad } from 'js-yaml';
 
 export function getLibFiles(projectPath: string, libsPath: string): string[] {
     return getKraftYamlLibs(projectPath)
@@ -15,13 +13,12 @@ export function getLibFiles(projectPath: string, libsPath: string): string[] {
 export function getKraftYamlLibs(projectPath: string): string[] {
     let kraftYamlPath = "";
     utils.getDefaultFileNames().forEach(element => {
-        let temPath = join(projectPath, element)
+        const temPath = join(projectPath, element)
         if (existsSync(temPath)) {
             kraftYamlPath = temPath
         }
     });
-    const kraftYaml = yaml.load(
-        readFileSync(join(kraftYamlPath), 'utf-8'));
+    const kraftYaml: any = yamlLoad(readFileSync(join(kraftYamlPath), 'utf-8'));
     const kraftLibs = Object.keys(kraftYaml).includes('libraries') ?
     Object.keys(kraftYaml.libraries) : [];
 
@@ -30,7 +27,7 @@ export function getKraftYamlLibs(projectPath: string): string[] {
 
 export function getAllFiles(dirPath: string): string[] {
     const files = readdirSync(dirPath);
-    var includeFiles: string[] = [];
+    let includeFiles: string[] = [];
 
     files.forEach((file: string) => {
         const filePath = join(dirPath, file);

@@ -5,8 +5,7 @@ import * as utils from './../commands/utils';
 import { join } from 'path';
 import { getAllFiles, getLibFiles } from "./utils";
 import { existsSync, readFileSync } from "fs";
-
-const yaml = require('js-yaml');
+import { load as yamlLoad } from 'js-yaml';
 
 export async function reloadIncludes(projectPath?: string) {
     if (!projectPath) {
@@ -14,7 +13,7 @@ export async function reloadIncludes(projectPath?: string) {
     }
 
     const projectUnikraft = join(projectPath, '.unikraft')
-    var includeFiles = getAllFiles(join(projectUnikraft, 'unikraft'));
+    let includeFiles = getAllFiles(join(projectUnikraft, 'unikraft'));
 
     if (projectPath) {
         const libPaths = getLibFiles(
@@ -84,13 +83,12 @@ export async function setupCSupport(projectPath?: string) {
 function getKraftYamlConfig(projectPath: string): string[] {
     let kraftYamlPath = "";
     utils.getDefaultFileNames().forEach(element => {
-        let temPath = join(projectPath, element)
+        const temPath = join(projectPath, element)
         if (existsSync(temPath)) {
             kraftYamlPath = temPath
         }
     });
-    const kraftYaml = yaml.load(
-        readFileSync(kraftYamlPath, 'utf-8'));
+    const kraftYaml: any = yamlLoad(readFileSync(kraftYamlPath, 'utf-8'));
 
     const ukConfig = Object.keys(kraftYaml).includes('unikraft')
         && Object.keys(kraftYaml.unikraft).includes('kconfig') ?

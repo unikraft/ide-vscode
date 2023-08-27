@@ -1,11 +1,14 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 import { OutputChannel, StatusBarItem, window, workspace } from 'vscode';
-import { existsSync } from 'fs';
-import { basename, join } from 'path';
-import { getProjectPath, getSourcesDir, getManifestsDir, getDefaultFileNames, showErrorMessage, getKraftYaml, showInfoMessage } from './utils';
-
-const yaml = require('js-yaml');
+import {
+	getProjectPath,
+	getSourcesDir,
+	getManifestsDir,
+	showErrorMessage,
+	getTarget,
+	showInfoMessage
+} from './utils';
 
 export async function kraftRun(
 	kraftChannel: OutputChannel,
@@ -18,22 +21,26 @@ export async function kraftRun(
 		return;
 	}
 
-	const target = await getTarget(kraftChannel, kraftStatusBarItem, projectPath);
+	const target = await getTarget(
+		kraftChannel,
+		kraftStatusBarItem,
+		projectPath
+	);
 	if (!target) {
 		return;
 	}
 	const splitTarget = target.split('-');
 
-	let runArgs = `--plat ${splitTarget[0]} -m ${splitTarget[1]}` + getAllRunArgs();
+	const runArgs = `--plat ${splitTarget[0]} -m ${splitTarget[1]}` + getAllRunArgs();
 
 	showInfoMessage(kraftChannel, kraftStatusBarItem,
 		"Running project..."
 	)
 	try {
-		let sourcesDir = getSourcesDir();
-		let manifestsDir = getManifestsDir();
+		const sourcesDir = getSourcesDir();
+		const manifestsDir = getManifestsDir();
 		const terminal = window.createTerminal({
-			name: "kraft run",
+			name: "kraft run --log-type=json",
 			cwd: projectPath,
 			hideFromUser: false,
 			env: Object.assign(process.env, {
@@ -44,52 +51,12 @@ export async function kraftRun(
 		});
 
 		terminal.show();
-		terminal.sendText(`kraft run ${runArgs}`);
+		terminal.sendText(`kraft run --log-type=json ${runArgs}`);
 	} catch (error) {
 		showErrorMessage(kraftChannel, kraftStatusBarItem,
 			`[Error] Run project ${error}.`
 		)
 	}
-}
-
-async function getTarget(
-	kraftChannel: OutputChannel,
-	kraftStatusBarItem: StatusBarItem,
-	projectPath: string
-): Promise<string | undefined> {
-	const kraftYaml = getKraftYaml(projectPath);
-	if (kraftYaml.targets == undefined || kraftYaml.targets.length == 0) {
-		showErrorMessage(kraftChannel, kraftStatusBarItem,
-			'Run error: no target found in Kraftfile'
-		);
-		return;
-	}
-	const targets: string[] = kraftYaml.targets
-		.map((target: { architecture: any; platform: any; }) =>
-			target.platform == "firecracker" ? `fc-${target.architecture}` : `${target.platform}-${target.architecture}`)
-		.filter((target: string) =>
-			existsSync(join(
-				projectPath,
-				'.unikraft',
-				'build',
-				`${basename(projectPath)}_${target}`
-			)
-			)
-		);
-
-	if (targets.length == 0) {
-		showErrorMessage(kraftChannel, kraftStatusBarItem,
-			'Run error: No matching builts found.'
-		);
-		return;
-	}
-
-	const target = await window.showQuickPick(
-		targets,
-		{ placeHolder: 'Choose the target' }
-	);
-
-	return target;
 }
 
 function getAllRunArgs(): string {
@@ -105,45 +72,45 @@ function getAllRunArgs(): string {
 	}
 
 	const initrd = workspace.getConfiguration().get('unikraft.run.initrd', "");
-	if (initrd !== '') {
+	if (initrd !== null && initrd !== "") {
 		runArgs += ' --initrd ' + initrd;
 	}
 
-	const ip = workspace.getConfiguration().get('unikraft.run.ip', '');
-	if (ip !== '') {
+	const ip = workspace.getConfiguration().get('unikraft.run.ip', "");
+	if (ip !== null && ip !== "") {
 		runArgs += ' --ip ' + ip;
 	}
 
 	const kernelArgs = workspace.getConfiguration().get('unikraft.run.kernelArguments', []);
-	if (kernelArgs.length > 0) {
+	if (kernelArgs !== null && kernelArgs?.length > 0) {
 		runArgs += ' --kernel-arg';
 		kernelArgs.forEach(element => {
 			runArgs += " " + element;
 		});
 	}
 
-	const macAddress = workspace.getConfiguration().get('unikraft.run.macAddress', '');
-	if (macAddress !== '') {
+	const macAddress = workspace.getConfiguration().get('unikraft.run.macAddress', "");
+	if (macAddress !== null && macAddress !== "") {
 		runArgs += ' --mac ' + macAddress;
 	}
 
-	const memory = workspace.getConfiguration().get('unikraft.run.memory', '');
-	if (memory !== '') {
+	const memory = workspace.getConfiguration().get('unikraft.run.memory', "");
+	if (memory !== null && memory !== "") {
 		runArgs += ' -M ' + memory;
 	}
 
-	const name = workspace.getConfiguration().get('unikraft.run.name', '');
-	if (name !== '') {
+	const name = workspace.getConfiguration().get('unikraft.run.name', "");
+	if (name !== null && name !== "") {
 		runArgs += ' --name ' + name;
 	}
 
-	const network = workspace.getConfiguration().get('unikraft.run.network', '');
-	if (network !== '') {
+	const network = workspace.getConfiguration().get('unikraft.run.network', "");
+	if (network !== null && network !== "") {
 		runArgs += ' --network ' + network;
 	}
 
 	const ports = workspace.getConfiguration().get('unikraft.run.ports', []);
-	if (ports.length > 0) {
+	if (ports?.length > 0) {
 		runArgs += ' --port';
 		ports.forEach(element => {
 			runArgs += " " + element;
@@ -155,13 +122,13 @@ function getAllRunArgs(): string {
 		runArgs += ' --rm';
 	}
 
-	const as = workspace.getConfiguration().get('unikraft.run.as', '');
-	if (as !== '') {
+	const as = workspace.getConfiguration().get('unikraft.run.as', "");
+	if (as !== null && as !== "") {
 		runArgs += ' --as ' + as;
 	}
 
-	const volume = workspace.getConfiguration().get('unikraft.run.volume', '');
-	if (volume !== '') {
+	const volume = workspace.getConfiguration().get('unikraft.run.volume', "");
+	if (volume !== null && volume !== "") {
 		runArgs += ' --volume ' + volume;
 	}
 
