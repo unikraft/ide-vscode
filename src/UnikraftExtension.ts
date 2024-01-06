@@ -1,14 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 import * as vscode from 'vscode';
-import {
-    getProjectPath,
-    getSourcesDir,
-    getManifestsDir,
-    showErrorMessage,
-    getDefaultFileNames,
-    refreshViews
-} from './commands/utils';
+import * as utils from './commands/utils';
 import { reloadConfig, reloadIncludes } from './language/c';
 import { setupPythonSupport } from './language/python';
 import { ExternalLibrariesProvider, Library } from './ExternalLibrariesProvider';
@@ -34,9 +27,9 @@ export class UnikraftExtension {
         100
     );
     private externalLibrariesProvider = new ExternalLibrariesProvider(
-        getProjectPath(),
-        getSourcesDir(),
-        getManifestsDir()
+        utils.getProjectPath(),
+        utils.getSourcesDir(),
+        utils.getManifestsDir()
     );
 
     async activate() {
@@ -65,7 +58,7 @@ export class UnikraftExtension {
                     this.kraftStatusBarItem.text = 'Installed kraft.';
                     this.kraftChannel.appendLine('Executing "kraft pkg update"...');
                     this.kraftChannel.appendLine(execSync(
-                        'kraft pkg update --log-type=json',
+                        'kraft pkg update --log-type=basic',
                         { env: env }
                     ).toString()
                     );
@@ -100,11 +93,11 @@ export class UnikraftExtension {
             this.externalLibSetup();
             let isKraftfile: boolean = false;
             const fileName: string = basename(document.fileName);
-            const projectPath = getProjectPath();
+            const projectPath = utils.getProjectPath();
             if (!projectPath) {
                 return
             }
-            getDefaultFileNames().forEach(file => {
+            utils.getDefaultFileNames().forEach(file => {
                 if (file === fileName) {
                     isKraftfile = true;
                 }
@@ -128,7 +121,7 @@ export class UnikraftExtension {
         vscode.window.showInformationMessage(
             'Congratulations, your extension "Unikraft" is now active!'
         );
-        refreshViews();
+        utils.refreshViews();
     }
 
     private async setupExtension() {
@@ -139,7 +132,7 @@ export class UnikraftExtension {
                         this.installKraft();
                         this.postSetup()
                     } else {
-                        showErrorMessage(this.kraftChannel,
+                        utils.showErrorMessage(this.kraftChannel,
                             this.kraftStatusBarItem,
                             "Kraftkit is not installed on the system."
                         )

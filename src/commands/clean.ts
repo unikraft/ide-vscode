@@ -1,27 +1,17 @@
 import { OutputChannel, StatusBarItem } from 'vscode';
 import { Command } from './Command';
-import {
-    getProjectPath,
-    showErrorMessage,
-    getSourcesDir,
-    getManifestsDir,
-    getTarget,
-    showInfoMessage
-} from './utils';
+import * as utils from './utils';
 
 export async function kraftClean(
     kraftChannel: OutputChannel,
     kraftStatusBarItem: StatusBarItem,
 ) {
     kraftChannel.show(true);
-    const projectPath = getProjectPath();
+    const projectPath = utils.getProjectPath();
     if (!projectPath) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No workspace.');
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No workspace.');
         return;
     }
-    showInfoMessage(kraftChannel, kraftStatusBarItem,
-        "Cleaning project..."
-    )
     cleanFromYaml(kraftChannel, kraftStatusBarItem, projectPath);
 }
 
@@ -30,20 +20,23 @@ async function cleanFromYaml(
     kraftStatusBarItem: StatusBarItem,
     projectPath: string
 ) {
-    const target = await getTarget(
+    const target = await utils.getTarget(
         kraftChannel,
         kraftStatusBarItem,
         projectPath
     );
     if (!target) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No target chosen.');
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem, 'Clean error: No target chosen.');
         return;
     }
     const splitTarget = target.split('-');
-    const sourcesDir = getSourcesDir();
-    const manifestsDir = getManifestsDir();
+    const sourcesDir = utils.getSourcesDir();
+    const manifestsDir = utils.getManifestsDir();
+    utils.showInfoMessage(kraftChannel, kraftStatusBarItem,
+        "Cleaning project..."
+    )
     const command = new Command(
-        `kraft clean --log-type=json -p ${splitTarget[0]} -m ${splitTarget[1]}`,
+        `kraft clean --log-type=basic -p ${splitTarget[0]} -m ${splitTarget[1]}`,
         {
             cwd: projectPath,
             env: Object.assign(process.env, {
@@ -53,14 +46,17 @@ async function cleanFromYaml(
             }),
         },
         'Cleaned project.',
-        () => { }
+        () => {
+            kraftStatusBarItem.text = 'Unikraft';
+        }
     );
 
     try {
         command.execute(kraftChannel, kraftStatusBarItem);
     } catch (error) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem,
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem,
             `[Error] Clean project ${error}.`
-        )
+        );
+        kraftStatusBarItem.text = 'Unikraft';
     }
 }

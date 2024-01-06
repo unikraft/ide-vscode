@@ -1,27 +1,20 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 import { OutputChannel, StatusBarItem, window, workspace } from 'vscode';
-import {
-	getProjectPath,
-	getSourcesDir,
-	getManifestsDir,
-	showErrorMessage,
-	getTarget,
-	showInfoMessage
-} from './utils';
+import * as utils from './utils';
 
 export async function kraftRun(
 	kraftChannel: OutputChannel,
 	kraftStatusBarItem: StatusBarItem,
 ) {
 	kraftChannel.show(true);
-	const projectPath = getProjectPath();
+	const projectPath = utils.getProjectPath();
 	if (!projectPath) {
-		showErrorMessage(kraftChannel, kraftStatusBarItem, 'Run error: no workspace.');
+		utils.showErrorMessage(kraftChannel, kraftStatusBarItem, 'Run error: no workspace.');
 		return;
 	}
 
-	const target = await getTarget(
+	const target = await utils.getTarget(
 		kraftChannel,
 		kraftStatusBarItem,
 		projectPath
@@ -33,14 +26,14 @@ export async function kraftRun(
 
 	const runArgs = `--plat ${splitTarget[0]} -m ${splitTarget[1]}` + getAllRunArgs();
 
-	showInfoMessage(kraftChannel, kraftStatusBarItem,
+	utils.showInfoMessage(kraftChannel, kraftStatusBarItem,
 		"Running project..."
 	)
 	try {
-		const sourcesDir = getSourcesDir();
-		const manifestsDir = getManifestsDir();
+		const sourcesDir = utils.getSourcesDir();
+		const manifestsDir = utils.getManifestsDir();
 		const terminal = window.createTerminal({
-			name: "kraft run --log-type=json",
+			name: "kraft run --log-type=basic",
 			cwd: projectPath,
 			hideFromUser: false,
 			env: Object.assign(process.env, {
@@ -51,12 +44,13 @@ export async function kraftRun(
 		});
 
 		terminal.show();
-		terminal.sendText(`kraft run --log-type=json ${runArgs}`);
+		terminal.sendText(`kraft run --log-type=basic ${runArgs}`);
 	} catch (error) {
-		showErrorMessage(kraftChannel, kraftStatusBarItem,
+		utils.showErrorMessage(kraftChannel, kraftStatusBarItem,
 			`[Error] Run project ${error}.`
 		)
 	}
+	kraftStatusBarItem.text = 'Unikraft';
 }
 
 function getAllRunArgs(): string {

@@ -4,7 +4,6 @@ import { exec, ExecException } from "child_process";
 import { OutputChannel, StatusBarItem, window } from "vscode";
 
 export class Command {
-
 	constructor(
 		public readonly command: string,
 		public readonly options: object,

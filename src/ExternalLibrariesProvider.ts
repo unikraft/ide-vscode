@@ -1,15 +1,6 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
-import {
-	Event,
-	EventEmitter,
-	OutputChannel,
-	StatusBarItem,
-	TreeDataProvider,
-	TreeItem,
-	TreeItemCollapsibleState,
-	window
-} from 'vscode';
+import * as vscode from 'vscode';
 import {
 	existsSync,
 	readdirSync,
@@ -17,33 +8,15 @@ import {
 } from 'fs';
 import { join } from 'path';
 import { execSync } from 'child_process';
-import {
-	getProjectPath,
-	refreshViews,
-	removeCore,
-	getSourcesDir,
-	getManifestsDir,
-	showErrorMessage,
-	getKraftYaml,
-	getKraftYamlPath,
-	removeCoreProjectDir,
-	showInfoMessage,
-	pkgExtractor,
-	getPkgManifest
-} from './commands/utils';
+import * as utils from './commands/utils';
 import { Command } from './commands/Command';
 import { stringify as yamlStringify } from 'yaml';
-import {
-	KraftYamlType,
-	KraftLibType,
-	KraftEnvType,
-	ListDataType
-} from './types/types';
+import * as types from './types/types';
 
-export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
+export class ExternalLibrariesProvider implements vscode.TreeDataProvider<Library> {
 
-	private _onDidChangeTreeData: EventEmitter<Library | undefined | void> = new EventEmitter<Library | undefined | void>();
-	readonly onDidChangeTreeData: Event<Library | undefined | void> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<Library | undefined | void> = new vscode.EventEmitter<Library | undefined | void>();
+	readonly onDidChangeTreeData: vscode.Event<Library | undefined | void> = this._onDidChangeTreeData.event;
 
 	constructor(
 		private projectPath: string | undefined,
@@ -79,19 +52,19 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 	);
 
 	refresh(): void {
-		this.projectPath = getProjectPath();
-		this.sourcesDir = getSourcesDir();
-		this.manifestsDir = getManifestsDir();
+		this.projectPath = utils.getProjectPath();
+		this.sourcesDir = utils.getSourcesDir();
+		this.manifestsDir = utils.getManifestsDir();
 		this._onDidChangeTreeData.fire();
 	}
 
-	getTreeItem(element: Library): TreeItem {
+	getTreeItem(element: Library): vscode.TreeItem {
 		return element;
 	}
 
 	getChildren(element?: Library): Thenable<Library[]> {
 		if (!this.projectPath) {
-			window.showInformationMessage('No library in empty workspace');
+			vscode.window.showInformationMessage('No library in empty workspace');
 			return Promise.resolve([]);
 		}
 
@@ -99,9 +72,9 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 			return Promise.resolve(this.getData(element));
 		}
 
-		const kraftYaml = getKraftYaml(this.projectPath);
-		if (kraftYaml == null) {
-			window.showErrorMessage("could not fetch Kraftfile");
+		const kraftYaml = utils.getKraftYaml(this.projectPath);
+		if (!kraftYaml) {
+			vscode.window.showErrorMessage("could not fetch Kraftfile");
 			return Promise.resolve([]);
 		}
 		const core = this.getCore(kraftYaml);
@@ -110,28 +83,28 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 	}
 
 	async addLibrary(
-		kraftChannel: OutputChannel,
-		kraftStatusBarItem: StatusBarItem
+		kraftChannel: vscode.OutputChannel,
+		kraftStatusBarItem: vscode.StatusBarItem
 	) {
 		if (!this.projectPath) {
-			showErrorMessage(kraftChannel, kraftStatusBarItem, "No workspace.")
+			utils.showErrorMessage(kraftChannel, kraftStatusBarItem, "No workspace.")
 			return;
 		}
+		const projectPath = this.projectPath
 		let pullCommand;
-		const options = { cwd: this.projectPath, env: this.kraftEnv };
+		const options = { cwd: projectPath, env: this.kraftEnv };
 		let core: Library[] = []
 		let libs = this.getLibs();
-		let jsonCore = execSync('kraft pkg list --log-type=json -C -o=json', { env: this.kraftEnv }).toString();
-		jsonCore = pkgExtractor(jsonCore);
+		let jsonCore = execSync('kraft pkg list --log-type=basic -C -o=json', { env: this.kraftEnv }).toString();
+		jsonCore = utils.pkgExtractor(jsonCore);
 		if (jsonCore.length > 0) {
 			core = JSON.parse(jsonCore)
-				.map((core: ListDataType) =>
+				.map((core: types.ListDataType) =>
 					this.toLib({ meta: { name: core.name }, data: core }, '', false));
 
 		}
-		// window.showInformationMessage("running AddLibrary inside")
 		libs = libs.concat(core);
-		const lib = await window.showQuickPick(
+		const lib = await vscode.window.showQuickPick(
 			libs.map(lib => lib.name),
 			{ placeHolder: 'Choose the library' }
 		);
@@ -141,66 +114,81 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 
 		const versions: string[] = this.getLibVersions(lib);
 		if (versions.length == 0) {
-			showErrorMessage(
+			utils.showErrorMessage(
 				kraftChannel,
 				kraftStatusBarItem,
-				"found 0 versions of the selected library"
+				"Not found any version of the selected library."
 			);
 			return;
 		}
 
-		const version = await window.showQuickPick(
+		const version = await vscode.window.showQuickPick(
 			versions,
 			{ placeHolder: 'Choose the library version' }
 		);
 		if (!version) {
 			return;
 		}
-
 		kraftChannel.show(true);
 		if (lib.toLowerCase() == "unikraft") {
-			removeCoreProjectDir(kraftChannel, kraftStatusBarItem, this.projectPath)
+			utils.removeCoreProjectDir(kraftChannel, kraftStatusBarItem, projectPath)
 			pullCommand = new Command(
 				`kraft pkg pull --log-type=basic ${lib}:${version}`,
 				options,
 				`Pulled ${lib} with ${version} version.`,
-				refreshViews
-			);
-
-			const kraftYamlPath = getKraftYamlPath(this.projectPath);
-			if (!kraftYamlPath) {
-				showErrorMessage(kraftChannel, kraftStatusBarItem, "Kraftfile not found.")
-				return;
-			}
-			const kraftYaml = getKraftYaml(this.projectPath)
-			if (!kraftYaml.unikraft) {
-				kraftYaml.unikraft = {
-					version: version
+				() => {
+					const kraftYamlPath = utils.getKraftYamlPath(projectPath);
+					if (!kraftYamlPath) {
+						utils.showErrorMessage(
+							kraftChannel,
+							kraftStatusBarItem,
+							"Kraftfile not found."
+						);
+						return;
+					}
+					const kraftYaml = utils.getKraftYaml(projectPath)
+					if (!kraftYaml) {
+						return
+					}
+					kraftYaml.unikraft = {
+						version: version,
+						kconfig: undefined
+					}
+					writeFileSync(kraftYamlPath, yamlStringify(kraftYaml));
+					utils.showInfoMessage(kraftChannel,
+						kraftStatusBarItem,
+						`Added ${lib}:${version} to Kraftfile.`
+					);
+					kraftStatusBarItem.text = 'Unikraft';
+					utils.refreshViews();
 				}
-			} else {
-				kraftYaml.unikraft.version = version
-			}
-			writeFileSync(kraftYamlPath, yamlStringify(kraftYaml))
+			);
 		} else {
 			pullCommand = new Command(
 				`kraft lib add --log-type=basic ${lib}:${version}`,
 				options,
-				`Added ${lib} with ${version} version.`,
-				refreshViews
+				`Finished adding ${lib}:${version}.`,
+				() => {
+					kraftStatusBarItem.text = 'Unikraft';
+					utils.refreshViews();
+				}
 			);
 		}
-
+		utils.showInfoMessage(kraftChannel, kraftStatusBarItem, "Adding library...")
 		pullCommand.execute(kraftChannel, kraftStatusBarItem);
 	}
 
-	private getCore(kraftYaml: KraftYamlType): Library[] {
-		let jsonCore = execSync('kraft pkg list --log-type=json -C -o=json', { env: this.kraftEnv }).toString()
-		jsonCore = pkgExtractor(jsonCore);
+	private getCore(kraftYaml: types.KraftYamlType): Library[] {
+		let jsonCore = execSync('kraft pkg list --log-type=basic -C -o=json', { env: this.kraftEnv }).toString()
+		jsonCore = utils.pkgExtractor(jsonCore);
 		if (jsonCore.length == 0) {
 			return [];
 		}
 		const core = JSON.parse(jsonCore)[0];
-		const isInKraftYaml = Object.keys(kraftYaml).includes('unikraft');
+		let isInKraftYaml: boolean = false
+		if (kraftYaml.unikraft) {
+			isInKraftYaml = true
+		}
 		return [this.toLib(
 			{
 				meta: {
@@ -213,7 +201,7 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 		)].filter(lib => lib.isPresent());
 	}
 
-	private getPresentLibs(kraftYaml: KraftYamlType): Library[] {
+	private getPresentLibs(kraftYaml: types.KraftYamlType): Library[] {
 		const rawLibs = this.listLibs();
 		const kraftLibs = Object.keys(kraftYaml).includes('libraries') && kraftYaml.libraries !== null ?
 			Object.keys(kraftYaml.libraries) : [];
@@ -248,14 +236,14 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 			.sort(this.compareLibs);
 	}
 
-	private getKraftOnlyLibs(kraftYaml: KraftYamlType, kraftLibs: string[]): Library[] {
+	private getKraftOnlyLibs(kraftYaml: types.KraftYamlType, kraftLibs: string[]): Library[] {
 		return kraftLibs.map((lib: string) => new Library(
 			lib,
 			this.getKraftLibVersion(kraftYaml.libraries[lib]),
 			true,
 			this.isAvailableLocally(lib, this.getKraftLibVersion(kraftYaml.libraries[lib])),
 			'',
-			TreeItemCollapsibleState.None,
+			vscode.TreeItemCollapsibleState.None,
 			this.projectPath,
 			this.kraftEnv)
 		);
@@ -266,52 +254,70 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 			if (lib.name.length > 0) {
 				return lib;
 			}
-		}).map((lib: ListDataType) =>
+		}).map((lib: types.ListDataType) =>
 			this.toLib({ meta: { name: lib.name }, data: lib }, '', false)
 		).sort(this.compareLibs)
 
 		return libs;
 	}
 
-	private listLibs(): [ListDataType] {
-		let jsonLibs = execSync('kraft pkg list --log-type=json -L -o=json', { env: this.kraftEnv })
+	private listLibs(): [types.ListDataType] {
+		let jsonLibs = execSync('kraft pkg list --log-type=basic -L -o=json', { env: this.kraftEnv })
 			.toString();
-		jsonLibs = pkgExtractor(jsonLibs);
+		jsonLibs = utils.pkgExtractor(jsonLibs);
 		if (jsonLibs.length == 0) {
-			return [{ format: "", name: "", type: "", version: "" }];
+			return [
+				{
+					channels: "",
+					description: "",
+					format: "",
+					name: "",
+					type: "",
+					version: "",
+					versions: ""
+				}
+			];
 		}
 		return JSON.parse(jsonLibs);
 	}
 
-	private getKraftLibVersion(lib: KraftLibType): string {
+	private getKraftLibVersion(lib: types.KraftLibType | undefined): string {
 		let ret: string = ""
 		if (typeof lib == "string") {
 			ret = lib;
-		} else if (Object.keys(lib).includes('version')) {
+		} else if (typeof lib != 'undefined' && Object.keys(lib).includes('version')) {
 			ret = lib.version
 		}
 		return ret;
 	}
 
 	private getData(lib: Library): Library[] {
-		const details = Object.keys(lib.data);
-		return details.map(key => new Library(
-			key,
-			lib.data[key],
-			false,
-			false,
-			(lib.data[key] && typeof lib.data[key] !== 'string') ?
-				lib.data[key] : '',
-			(lib.data[key] && typeof lib.data[key] !== 'string') ?
-				TreeItemCollapsibleState.Collapsed :
-				TreeItemCollapsibleState.None,
-			this.projectPath,
-			this.kraftEnv)
-		);
+		const details: string[] = Object.keys(lib.data);
+		details.forEach((key, index) => {
+			if (key as keyof types.ListDataType) {
+				details[index] = key;
+			}
+		})
+		return details.map((key) => {
+			let data: string = ""
+			data = typeof lib.data == 'string' ? lib.data : lib.data[key as keyof types.ListDataType];
+			return new Library(
+				key,
+				data,
+				false,
+				false,
+				data,
+				(typeof data !== 'string') ?
+				vscode.TreeItemCollapsibleState.Collapsed :
+				vscode.TreeItemCollapsibleState.None,
+				this.projectPath,
+				this.kraftEnv
+			)
+		});
 	}
 
 	private toLib(
-		lib: { meta: { name: string; }, data: ListDataType },
+		lib: { meta: { name: string; }, data: types.ListDataType },
 		kraftVersion: string,
 		isInKraftYaml: boolean
 	): Library {
@@ -321,7 +327,7 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 			isInKraftYaml,
 			this.isAvailableLocally(lib.meta.name, kraftVersion),
 			lib.data,
-			TreeItemCollapsibleState.Collapsed,
+			vscode.TreeItemCollapsibleState.Collapsed,
 			this.projectPath,
 			this.kraftEnv
 		);
@@ -339,10 +345,10 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 			return true;
 		}
 
-		const libManifest = getPkgManifest(libName);
+		const libManifest = utils.getPkgManifest(libName);
 		if (libManifest !== null) {
 			libManifest.channels.forEach(
-				(channel: { default: boolean, name: string, resource: string }) => {
+				(channel: types.LibManifestChannelType) => {
 					if (channel.default && existsSync(channel.resource)) {
 						fileExist = true;
 					}
@@ -361,14 +367,12 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 	}
 
 	private getLibVersions(lib: string): string[] {
-		const libManifest = getPkgManifest(lib);
+		const libManifest = utils.getPkgManifest(lib);
 		if (libManifest == null) {
 			return [];
 		}
-		const channelVersions: string[] = libManifest.channels.map((channel:
-			{ name: string }
-		) =>
-			channel["name"]
+		const channelVersions: string[] = libManifest.channels.map(
+			(channel: types.LibManifestChannelType) => channel["name"]
 		).filter((str: string) => str.length > 0)
 
 		const versions: string[] = libManifest.versions ?
@@ -380,17 +384,17 @@ export class ExternalLibrariesProvider implements TreeDataProvider<Library> {
 	}
 }
 
-export class Library extends TreeItem {
+export class Library extends vscode.TreeItem {
 
 	constructor(
 		public readonly name: string,
 		private _kraftVersion: string,
 		private _isInKraftYaml: boolean,
 		private readonly isAvailable: boolean,
-		public readonly data: any,
-		public readonly collapsibleState: TreeItemCollapsibleState,
+		public readonly data: types.ListDataType | string,
+		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		private readonly projectPath: string | undefined,
-		private readonly kraftEnv: KraftEnvType
+		private readonly kraftEnv: types.KraftEnvType
 	) {
 		super(name, collapsibleState);
 
@@ -444,54 +448,63 @@ export class Library extends TreeItem {
 	}
 
 	removeLibrary(
-		kraftChannel: OutputChannel,
-		kraftStatusBarItem: StatusBarItem,
+		kraftChannel: vscode.OutputChannel,
+		kraftStatusBarItem: vscode.StatusBarItem,
 		purge?: boolean
 	) {
 		kraftChannel.show(true);
 		if (!this.projectPath) {
-			showErrorMessage(kraftChannel, kraftStatusBarItem, "No workspace found.")
+			utils.showErrorMessage(kraftChannel, kraftStatusBarItem, "No workspace found.")
 			return;
 		}
 
-		showInfoMessage(kraftChannel, kraftStatusBarItem,
+		const commands = []
+		utils.showInfoMessage(kraftChannel, kraftStatusBarItem,
 			`Removing library ${this.name}...`
 		)
-		const commands = []
-
 		if (this._isInKraftYaml) {
 			if (this.name == "unikraft") {
-				removeCore(kraftChannel, kraftStatusBarItem, this.projectPath);
-				refreshViews();
+				utils.removeCore(kraftChannel, kraftStatusBarItem, this.projectPath);
+				utils.refreshViews();
+				kraftStatusBarItem.text = 'Unikraft';
 			} else {
 				commands.push(new Command(
 					`kraft lib remove ${this.name}`,
 					{ cwd: this.projectPath, env: this.kraftEnv },
-					`Removed ${this.name}:${this._kraftVersion} from the project directory.`,
-					refreshViews
+					`Finished Removing ${this.name}:${this._kraftVersion}.`,
+					() => {
+						kraftStatusBarItem.text = 'Unikraft';
+						utils.refreshViews();
+					}
 				))
 			}
 		} else if (!purge) {
-			showErrorMessage(
+			utils.showErrorMessage(
 				kraftChannel,
 				kraftStatusBarItem,
-				"Could not remove package as it is not used by the project."
+				"Package not found in workdir."
 			);
 			return;
 		}
 
 		if (this.isAvailable && purge) {
+			utils.showInfoMessage(kraftChannel, kraftStatusBarItem,
+				`Purging library ${this.name}...`
+			);
 			commands.push(new Command(
 				`kraft pkg prune ${this.name}:${this._kraftVersion}`,
 				{ cwd: this.projectPath, env: this.kraftEnv },
-				`Pruned ${this.name}:${this._kraftVersion} from the system.`,
-				refreshViews
-			))
+				`Finished Pruning ${this.name}:${this._kraftVersion}.`,
+				() => {
+					kraftStatusBarItem.text = 'Unikraft';
+					utils.refreshViews();
+				}
+			));
 		} else if (purge) {
-			showErrorMessage(
+			utils.showErrorMessage(
 				kraftChannel,
 				kraftStatusBarItem,
-				"Could not purge package as it is not available on the host machine."
+				"Package not found on host machine."
 			);
 		}
 

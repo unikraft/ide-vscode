@@ -1,13 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 import { OutputChannel, StatusBarItem, window } from 'vscode';
-import {
-    getProjectPath,
-    showErrorMessage,
-    getSourcesDir,
-    getManifestsDir,
-    showInfoMessage
-} from './utils';
+import * as utils from './utils';
 
 export async function kraftConfigure(
     kraftChannel: OutputChannel,
@@ -15,15 +9,15 @@ export async function kraftConfigure(
 ) {
     kraftChannel.show(true);
     // TODO: automatically update kraft.yaml syntax using a kraft command
-    const projectPath = getProjectPath();
-    const sourceDir = getSourcesDir()
-    const manifestsDir = getManifestsDir()
+    const projectPath = utils.getProjectPath();
+    const sourceDir = utils.getSourcesDir()
+    const manifestsDir = utils.getManifestsDir()
     if (!projectPath) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Configure error: No workspace.')
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem, 'Configure error: No workspace.')
         return;
     }
 
-    showInfoMessage(kraftChannel, kraftStatusBarItem,
+    utils.showInfoMessage(kraftChannel, kraftStatusBarItem,
         "Configuring project..."
     )
 
@@ -36,13 +30,14 @@ export async function kraftConfigure(
                 'KRAFTKIT_PATHS_MANIFESTS': manifestsDir,
                 'KRAFTKIT_PATHS_SOURCES': sourceDir,
                 'KRAFTKIT_NO_CHECK_UPDATES': true
-            })
+            }),
         });
         terminal.show();
         terminal.sendText('kraft menu 2> /tmp/err_kraft_configure');
     } catch (error) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem,
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem,
             `[Error] Configure project ${error}.`
-        )
+        );
     }
+    kraftStatusBarItem.text = 'Unikraft';
 }

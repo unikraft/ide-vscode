@@ -129,6 +129,12 @@ The CLI `kraft` can be installed via:
 curl --proto '=https' --tlsv1.2 -sSf https://get.kraftkit.sh | sh
 ```
 
+This extension also depends on the other extensions provided by microsoft,
+Please to have full capabilities of this extension also enable them in your vscode IDE, They are as follows:
+
+* [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
+* [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+
 ## Extension Settings
 
 This extension contributes the following settings:

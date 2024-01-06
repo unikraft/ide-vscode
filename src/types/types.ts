@@ -4,7 +4,7 @@ export interface KraftYamlType {
     spec: string,
     specification: string,
     name: string,
-    unikraft: KraftLibType,
+    unikraft: KraftLibType | undefined,
     libraries: {
         [key: string]: KraftLibType
     },
@@ -12,8 +12,13 @@ export interface KraftYamlType {
 }
 
 export type KraftLibType = {
-    version: string
+    version: string,
+    kconfig: KconfigType
 } | string
+
+export type KconfigType = {
+    [key: string]: string
+} | string[] | undefined
 
 export type KraftTargetType = {
     architecture: string
@@ -27,8 +32,33 @@ export type KraftEnvType = NodeJS.ProcessEnv & {
 }
 
 export type ListDataType = {
+    channels: string,
+    description: string,
     format: string,
     name: string,
     type: string,
+    version: string,
+    versions: string,
+}
+
+export interface LibManifestType {
+    channels: [LibManifestChannelType],
+    name: string,
+    origin: string,
+    provider: string,
+    type: string,
+    versions: []
+}
+
+export type LibManifestChannelType = {
+    default: boolean,
+    name: string,
+    resource: string
+}
+
+export type LibManifestVersionType = {
+    resource: string,
+    type: string,
+    unikraft: string,
     version: string
 }

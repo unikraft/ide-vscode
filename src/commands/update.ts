@@ -10,13 +10,15 @@ export async function kraftUpdate(
 ) {
     kraftChannel.show(true);
     const command = new Command(
-        `kraft pkg update --log-type=json`,
+        `kraft pkg update --log-type=basic`,
         {
             env: Object.assign(
                 process.env)
         },
         'Finished running kraft pkg update.',
-        () => { }
+        () => {
+            kraftStatusBarItem.text = 'Unikraft';
+        }
     );
 
     showInfoMessage(kraftChannel, kraftStatusBarItem,
