@@ -1,18 +1,18 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 import { ConfigurationTarget, workspace } from "vscode";
-import * as utils from './../commands/utils';
+import { getKraftYaml } from './../commands/utils';
 import { join } from 'path';
-import { getAllFiles, getLibFiles } from "./utils";
+import { getAllFiles, getKraftYamlLibs, getLibFiles } from "./utils";
 import { existsSync, readFileSync } from "fs";
-import { load as yamlLoad } from 'js-yaml';
+import { KraftLibType, KconfigType } from "../types/types";
 
 export async function reloadIncludes(projectPath?: string) {
     if (!projectPath) {
         return;
     }
 
-    const projectUnikraft = join(projectPath, '.unikraft')
+    const projectUnikraft = join(projectPath, '.unikraft');
     let includeFiles = getAllFiles(join(projectUnikraft, 'unikraft'));
 
     if (projectPath) {
@@ -23,7 +23,6 @@ export async function reloadIncludes(projectPath?: string) {
         libPaths.forEach(lib =>
             includeFiles = includeFiles.concat(getAllFiles(lib)));
     }
-
     await workspace.getConfiguration().update(
         'C_Cpp.default.includePath',
         includeFiles,
@@ -36,7 +35,7 @@ export async function reloadConfig(projectPath: string, changedFile?: string) {
         return;
     }
 
-    const kraftConfig = getKraftYamlConfig(projectPath);
+    const kraftConfig = getKraftYamlKConfig(projectPath);
     let config: string[] = [];
     if (changedFile) {
         const dotConfig = getDotConfig(projectPath, changedFile);
@@ -80,29 +79,43 @@ export async function setupCSupport(projectPath?: string) {
     reloadIncludes(projectPath);
 }
 
-function getKraftYamlConfig(projectPath: string): string[] {
-    let kraftYamlPath = "";
-    utils.getDefaultFileNames().forEach(element => {
-        const temPath = join(projectPath, element)
-        if (existsSync(temPath)) {
-            kraftYamlPath = temPath
-        }
-    });
-    const kraftYaml: any = yamlLoad(readFileSync(kraftYamlPath, 'utf-8'));
+function getKraftYamlKConfig(projectPath: string): string[] {
+    const kraftYaml = getKraftYaml(projectPath)
+    if (!kraftYaml) {
+        return []
+    }
+    const uConfigs = typeof kraftYaml.unikraft !== 'undefined' &&
+        typeof kraftYaml.unikraft["kconfig" as keyof KraftLibType] !== 'undefined' ?
+        kraftYaml.unikraft["kconfig" as keyof KraftLibType] : [];
+    let ukConfig: string[] = []
+    if (typeof uConfigs[0] !== 'string') {
+        ukConfig = Object.keys(uConfigs).map(key => {
+            return `${key}=${uConfigs[key as keyof KconfigType]}`
+        })
+    } else {
+        ukConfig = uConfigs;
+    }
 
-    const ukConfig = Object.keys(kraftYaml).includes('unikraft')
-        && Object.keys(kraftYaml.unikraft).includes('kconfig') ?
-        kraftYaml.unikraft.kconfig :
-        [];
+    const kraftLibs = getKraftYamlLibs(projectPath);
+    let kraftLibsKconfig: string[] = [];
+    if (kraftLibs.length > 0) {
+        kraftLibsKconfig = kraftLibs.flatMap(
+            (lib) => {
+                if (Object.keys(kraftYaml.libraries[lib]).includes("kconfig")) {
+                    const kconfig = kraftYaml.libraries[lib]["kconfig" as keyof KraftLibType];
+                    if (typeof kconfig[0] !== 'string') {
+                        return Object.keys(kconfig).map((key) => {
+                            return `${key}=${kconfig[key]}`
+                        })
+                    }
+                    return kconfig
+                }
+                return []
+            }
+        )
+    }
 
-    const kraftLibs = Object.keys(kraftYaml).includes('libraries') ?
-        Object.keys(kraftYaml.libraries).flatMap(lib =>
-            Object.keys(kraftYaml.libraries[lib]).includes('kconfig') ?
-                kraftYaml.libraries[lib].kconfig :
-                []) :
-        [];
-
-    return kraftLibs.concat(ukConfig);
+    return kraftLibsKconfig.concat(ukConfig);
 }
 
 function getDotConfig(projectPath: string, changedFile: string): string[] {

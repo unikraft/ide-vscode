@@ -5,9 +5,8 @@ import { basename, join } from 'path';
 import { homedir, } from 'os';
 import { env } from 'process'
 import { readFileSync, existsSync, writeFileSync, rmdirSync } from 'fs';
-import { stringify as yamlStringify } from 'yaml';
-import { load as yamlLoad } from 'js-yaml';
-import { KraftTargetType } from '../types/types';
+import { stringify as yamlStringify, parse as yamlParse } from 'yaml';
+import { KraftYamlType, KraftTargetType, LibManifestType } from '../types/types';
 
 export function getProjectPath(): string | undefined {
     return (workspace.workspaceFolders
@@ -63,14 +62,13 @@ export function getKraftYamlPath(projectPath: string): string | undefined {
     return kraftYamlPath;
 }
 
-export function getKraftYaml(projectPath: string): any {
+export function getKraftYaml(projectPath: string): KraftYamlType | undefined {
     const kraftYamlPath = getKraftYamlPath(projectPath)
 
     if (!kraftYamlPath) {
-        return null
+        return
     }
-
-    return yamlLoad(readFileSync(kraftYamlPath, 'utf-8'));
+    return yamlParse(readFileSync(kraftYamlPath, 'utf-8'));
 }
 
 export function getKraftkitConfigYAML(): {
@@ -79,8 +77,7 @@ export function getKraftkitConfigYAML(): {
         manifests: string
     }
 } {
-    const ret: any = yamlLoad(readFileSync(join(homedir(), '.config/kraftkit/config.yaml'), 'utf-8'));
-    return ret
+    return yamlParse(readFileSync(join(homedir(), '.config/kraftkit/config.yaml'), 'utf-8'));
 }
 
 export function refreshViews() {
@@ -95,14 +92,8 @@ export function removeCoreProjectDir(
     if (existsSync(join(projectPath, '.unikraft', 'unikraft'))) {
         rmdirSync(join(projectPath, '.unikraft', 'unikraft'), { recursive: true });
         showInfoMessage(kraftChannel, kraftStatusBarItem,
-            "Unikraft core has been removed from the project successfully."
+            "Removed unikraft core from workdir."
         )
-    } else {
-        showErrorMessage(
-            kraftChannel,
-            kraftStatusBarItem,
-            "Unikraft core is not present in the project."
-        );
     }
 }
 
@@ -128,12 +119,15 @@ export function removeCore(
         return;
     }
     const kraftYaml = getKraftYaml(projectPath);
+    if (!kraftYaml) {
+        return
+    }
     if (!kraftYaml["unikraft"]) {
         showErrorMessage(kraftChannel, kraftStatusBarItem,
-            "Unikraft core is already not present in the project."
+            "Unikraft core alreay exist."
         )
     } else {
-        kraftYaml["unikraft"] = '';
+        kraftYaml["unikraft"] = undefined;
     }
     writeFileSync(kraftYamlPath, yamlStringify(kraftYaml));
     removeCoreProjectDir(kraftChannel, kraftStatusBarItem, projectPath);
@@ -145,7 +139,6 @@ export function showInfoMessage(kraftChannel: OutputChannel, kraftStatusBarItem:
 }
 
 export function showErrorMessage(kraftChannel: OutputChannel, kraftStatusBarItem: StatusBarItem, msg: string) {
-    kraftStatusBarItem.text = msg;
     kraftChannel.appendLine(msg);
     window.showErrorMessage(msg);
 }
@@ -157,7 +150,7 @@ export function pkgExtractor(output: string): string {
     return ""
 }
 
-export function getPkgManifest(libName: string): any {
+export function getPkgManifest(libName: string): LibManifestType | null {
     const manifestsDir = getManifestsDir();
     let pkgPath: string = "";
     if (libName.toLowerCase() === 'unikraft') {
@@ -167,7 +160,7 @@ export function getPkgManifest(libName: string): any {
         if (!existsSync(index)) {
             return null;
         }
-        const indexFile: any = yamlLoad(readFileSync(index, 'utf-8'));
+        const indexFile = yamlParse(readFileSync(index, 'utf-8'));
         let libPath: string = "";
         indexFile.manifests.forEach((manifest: { manifest: string, name: string, type: string }) => {
             if (manifest.type == "lib" && manifest.name.toLowerCase() === libName.toLowerCase()) {
@@ -182,7 +175,7 @@ export function getPkgManifest(libName: string): any {
     if (!existsSync(pkgPath)) {
         return null;
     }
-    return yamlLoad(readFileSync(pkgPath, 'utf-8'));
+    return yamlParse(readFileSync(pkgPath, 'utf-8'));
 }
 
 export function fetchTargetsFromKraftYaml(
@@ -191,9 +184,9 @@ export function fetchTargetsFromKraftYaml(
     projectPath: string
 ): string[] | undefined {
     const kraftYaml = getKraftYaml(projectPath);
-    if (kraftYaml.targets == undefined || kraftYaml.targets == null) {
+    if (kraftYaml?.targets == undefined || kraftYaml?.targets == null) {
         showErrorMessage(kraftChannel, kraftStatusBarItem,
-            'no target found in Kraftfile'
+            'Kraftfile has no target specified.'
         );
         return;
     }
@@ -247,7 +240,7 @@ export async function getTarget(
 
     if (targets?.length == 0) {
         showErrorMessage(kraftChannel, kraftStatusBarItem,
-            'no matching builds found.'
+            'No matching builds found.'
         );
         return;
     }

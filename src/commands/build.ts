@@ -2,28 +2,21 @@
 
 import { OutputChannel, StatusBarItem, window, workspace } from 'vscode';
 import { Command } from './Command';
-import {
-    getProjectPath,
-    showErrorMessage,
-    getSourcesDir,
-    getManifestsDir,
-    showInfoMessage,
-    fetchTargetsFromKraftYaml
-} from './utils';
+import * as utils from './utils';
 
 export async function kraftBuild(
     kraftChannel: OutputChannel,
     kraftStatusBarItem: StatusBarItem,
 ): Promise<void> {
     kraftChannel.show(true)
-    const projectPath = getProjectPath();
+    const projectPath = utils.getProjectPath();
     if (!projectPath) {
         kraftChannel.appendLine('No workspace.');
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Build error: No workspace.');
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem, 'Build error: No workspace.');
         return;
     }
 
-    const targets = fetchTargetsFromKraftYaml(
+    const targets = utils.fetchTargetsFromKraftYaml(
         kraftChannel,
         kraftStatusBarItem,
         projectPath
@@ -36,7 +29,7 @@ export async function kraftBuild(
         { placeHolder: 'Choose the target' }
     );
     if (!target) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem, 'Build error: No target chosen.');
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem, 'Build error: No target chosen.');
         return;
     }
     const splitTarget = target.split('-');
@@ -49,7 +42,7 @@ export async function kraftBuild(
         { placeHolder: 'Configuration type' }
     );
 
-    showInfoMessage(kraftChannel, kraftStatusBarItem,
+    utils.showInfoMessage(kraftChannel, kraftStatusBarItem,
         "Building project..."
     );
 
@@ -57,6 +50,7 @@ export async function kraftBuild(
         buildNonInteractively(kraftChannel, kraftStatusBarItem, splitTarget, projectPath);
     } else {
         buildInteractively(splitTarget, projectPath);
+        kraftStatusBarItem.text = 'Unikraft';
     }
 }
 
@@ -66,10 +60,10 @@ async function buildNonInteractively(
     splitTarget: string[],
     projectPath: string
 ) {
-    const sourcesDir = getSourcesDir();
-    const manifestsDir = getManifestsDir();
+    const sourcesDir = utils.getSourcesDir();
+    const manifestsDir = utils.getManifestsDir();
     const command = new Command(
-        `kraft build --log-type=json -p ${splitTarget[0]} -m ${splitTarget[1]} ${getAllBuildArgs().trim()}`,
+        `kraft build --log-type=basic -p ${splitTarget[0]} -m ${splitTarget[1]} ${getAllBuildArgs().trim()}`,
         {
             cwd: projectPath,
             env: Object.assign(process.env, {
@@ -79,21 +73,23 @@ async function buildNonInteractively(
             }),
         },
         'Built project.',
-        () => { }
+        () => {
+            kraftStatusBarItem.text = 'Unikraft';
+        }
     );
 
     try {
         command.execute(kraftChannel, kraftStatusBarItem);
     } catch (error) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem,
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem,
             `[Error] Build project ${error}.`
         )
     }
 }
 
 async function buildInteractively(splitTarget: string[], projectPath: string) {
-    const sourcesDir = getSourcesDir();
-    const manifestsDir = getManifestsDir();
+    const sourcesDir = utils.getSourcesDir();
+    const manifestsDir = utils.getManifestsDir();
     const terminal = window.createTerminal({
         name: "kraft build",
         cwd: projectPath,

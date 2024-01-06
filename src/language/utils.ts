@@ -1,9 +1,8 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 import { join } from 'path';
-import { existsSync, readdirSync, readFileSync, statSync } from "fs";
-import * as utils from './../commands/utils';
-import { load as yamlLoad } from 'js-yaml';
+import { readdirSync, statSync } from "fs";
+import { getKraftYaml } from './../commands/utils';
 
 export function getLibFiles(projectPath: string, libsPath: string): string[] {
     return getKraftYamlLibs(projectPath)
@@ -11,17 +10,12 @@ export function getLibFiles(projectPath: string, libsPath: string): string[] {
 }
 
 export function getKraftYamlLibs(projectPath: string): string[] {
-    let kraftYamlPath = "";
-    utils.getDefaultFileNames().forEach(element => {
-        const temPath = join(projectPath, element)
-        if (existsSync(temPath)) {
-            kraftYamlPath = temPath
-        }
-    });
-    const kraftYaml: any = yamlLoad(readFileSync(join(kraftYamlPath), 'utf-8'));
+    const kraftYaml = getKraftYaml(projectPath);
+    if (!kraftYaml) {
+        return []
+    }
     const kraftLibs = Object.keys(kraftYaml).includes('libraries') ?
-    Object.keys(kraftYaml.libraries) : [];
-
+        Object.keys(kraftYaml.libraries) : [];
     return kraftLibs;
 }
 
@@ -37,6 +31,6 @@ export function getAllFiles(dirPath: string): string[] {
             includeFiles = includeFiles.concat(getAllFiles(filePath));
         }
     })
-  
+
     return includeFiles;
 }

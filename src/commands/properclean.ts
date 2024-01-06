@@ -14,14 +14,16 @@ export async function kraftProperclean(
     }
     kraftChannel.show(true);
     const command = new Command(
-        `kraft clean --log-type=json --proper`,
+        `kraft clean --log-type=basic --proper`,
         {
             cwd: projectPath,
             env: Object.assign(
                 process.env)
         },
         'Cleaned properly',
-        () => { }
+        () => {
+            kraftStatusBarItem.text = 'Unikraft';
+        }
     );
 
     showInfoMessage(kraftChannel, kraftStatusBarItem,

@@ -2,16 +2,7 @@
 
 import { OutputChannel, StatusBarItem, window, workspace } from 'vscode';
 import { join } from 'path';
-import {
-    getProjectPath,
-    getSourcesDir,
-    getManifestsDir,
-    refreshViews,
-    showErrorMessage,
-    getKraftYaml,
-    getKraftYamlPath,
-    showInfoMessage
-} from './utils';
+import * as utils from './utils';
 import { Command } from './Command';
 import { setupLangSupport } from '../language/language';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
@@ -23,9 +14,9 @@ export async function kraftInitialize(
     kraftStatusBarItem: StatusBarItem
 ) {
     kraftChannel.show(true);
-    const projectPath = getProjectPath();
+    const projectPath = utils.getProjectPath();
     if (!projectPath) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem,
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem,
             "No workspace."
         )
         return;
@@ -42,10 +33,6 @@ export async function kraftInitialize(
         return;
     }
 
-    showInfoMessage(kraftChannel, kraftStatusBarItem,
-        "Initializing project..."
-    )
-
     try {
         if (type === 'library') {
             initializeLibrary(projectPath, kraftChannel, kraftStatusBarItem);
@@ -53,7 +40,7 @@ export async function kraftInitialize(
             initializeApplication(projectPath, kraftChannel, kraftStatusBarItem);
         }
     } catch (error) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem,
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem,
             `[Error] Initialize project ${error}.`
         )
     }
@@ -66,7 +53,7 @@ async function initializeLibrary(
 ) {
     const initWorkdir = await chooseInitWorkdir();
     if (!initWorkdir) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem,
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem,
             `No path specified.`
         );
         return;
@@ -85,14 +72,14 @@ async function initializeLibrary(
     }
 
     if (!isProjectPathUnikraft && !existsSync(libsPath)) {
-        showErrorMessage(kraftChannel, kraftStatusBarItem,
+        utils.showErrorMessage(kraftChannel, kraftStatusBarItem,
             `Cound not create directory ${libsPath}.`
         );
         return
     }
 
-    const sourcesDir = getSourcesDir();
-    const manifestsDir = getManifestsDir();
+    const sourcesDir = utils.getSourcesDir();
+    const manifestsDir = utils.getManifestsDir();
     const kraftEnv = Object.assign(process.env, {
         'KRAFTKIT_PATHS_MANIFESTS': manifestsDir,
         'KRAFTKIT_PATHS_SOURCES': sourcesDir,
@@ -144,7 +131,9 @@ async function initializeLibrary(
         + ` --project-name ${libName}`,
         { cwd: libsPath, env: kraftEnv },
         `Initialized ${libName} library.`,
-        () => { }
+        () => {
+            kraftStatusBarItem.text = 'Unikraft';
+        }
     )];
 
     if (isProjectPathUnikraft) {
@@ -153,34 +142,45 @@ async function initializeLibrary(
         // therefore no need to add the custom created library to the project
         // with the command `kraft lib add`
         // Just Updating Kraftfile will work fine.
-        const kraftYamlPath = getKraftYamlPath(projectPath);
+        const kraftYamlPath = utils.getKraftYamlPath(projectPath);
         if (!kraftYamlPath) {
             return;
         }
-        const kraftYaml = getKraftYaml(projectPath);
+        const kraftYaml = utils.getKraftYaml(projectPath);
+        if (!kraftYaml) {
+            return
+        }
         if (kraftYaml["libraries"] == undefined) {
             kraftYaml["libraries"] = {};
         }
         kraftYaml["libraries"][libName] = {
-            "version": "default"
+            "version": "default",
+            kconfig: undefined
         };
         writeFileSync(kraftYamlPath, yamlStringify(kraftYaml));
+        utils.showInfoMessage(kraftChannel, kraftStatusBarItem,
+            `Initialized library at ${libsPath}.`
+        );
+        kraftStatusBarItem.text = 'Unikraft';
     } else {
         commands.push(new Command(
-            `kraft lib add --log-type=json ${libName}`,
+            `kraft lib add --log-type=basic ${libName}`,
             { cwd: projectPath, env: kraftEnv },
             `Added library ${libName} to the project.`,
             () => {
-                refreshViews();
+                utils.refreshViews();
                 setupLangSupport(join(projectPath));
+                utils.showInfoMessage(kraftChannel, kraftStatusBarItem,
+                    `Initialized library at ${libsPath}.`
+                );
+                kraftStatusBarItem.text = 'Unikraft';
             }
         ));
     }
-    commands[0].execute(kraftChannel, kraftStatusBarItem, commands.slice(1));
-
-    showInfoMessage(kraftChannel, kraftStatusBarItem,
-        `Initialized new library at the location ${libsPath}.`
+    utils.showInfoMessage(kraftChannel, kraftStatusBarItem,
+        "Initializing project..."
     )
+    commands[0].execute(kraftChannel, kraftStatusBarItem, commands.slice(1));
 }
 
 async function chooseInitWorkdir(): Promise<string | undefined> {
@@ -216,7 +216,7 @@ async function initializeApplication(
     kraftChannel: OutputChannel,
     kraftStatusBarItem: StatusBarItem,
 ) {
-    showErrorMessage(
+    utils.showErrorMessage(
         kraftChannel,
         kraftStatusBarItem,
         "Creating application template is not possible as command `kraft init` is not available in the `kraftkit`."
@@ -236,8 +236,8 @@ async function initializeApplication(
     //     appsPath = join(initWorkdir, 'sources');
     // }
 
-    // let sourcesDir = getSourcesDir();
-    // let manifestsDir = getManifestsDir();
+    // let sourcesDir = utils.getSourcesDir();
+    // let manifestsDir = utils.getManifestsDir();
     // let kraftEnv = Object.assign(process.env, {
     //     'KRAFTKIT_PATHS_MANIFESTS': manifestsDir,
     //     'KRAFTKIT_PATHS_SOURCES': sourcesDir,
@@ -284,7 +284,7 @@ async function initializeApplication(
     //         {cwd: appsPath, env: kraftEnv},
     //         `Initialized ${appTemplate} application.`,
     //         () => {
-    //             refreshViews();
+    //             utils.refreshViews();
     //             updateUkPackWorkdir(ukPackWorkdir, ConfigurationTarget.Workspace);
     //             setupLangSupport(projectPath);
     //         }
@@ -297,7 +297,7 @@ async function initializeApplication(
     //         {cwd: appsPath, env: kraftEnv},
     //         `Initialized blank application.`,
     //         () => {
-    //             refreshViews();
+    //             utils.refreshViews();
     //             updateUkPackWorkdir(ukPackWorkdir, ConfigurationTarget.Workspace);
     //             setupLangSupport(join(projectPath));
     //         }
