@@ -30,29 +30,29 @@ The user has to provide the extension with the following information in order to
 
 The Unikraft hierarchy will be in `./.unikraft`, the library source code will be in `./unikraft/libs/$lib_name`, whereas the application for testing the library will be in the opened directory.
 
-![Creating library](https://github.com/unikraft/ide-vscode/blob/prototype/media/creating-library.gif)
+![Creating library](https://github.com/unikraft/ide-vscode/blob/main/media/creating-library.gif)
 
 ### Project configuration
 
 The command `Unikraft: Configure project` from the command palette allows configuring the project interactively by opening a terminal with `menu`.
-
+<!-- https://github.com/unikraft/ide-vscode/blob/main/media/building.gif -->
 ### Project fetching
 
 The command `Unikraft: Fetch` from the command palette allows fetching dependecies for the project.
 
-![Fetching](https://github.com/unikraft/ide-vscode/blob/prototype/media/fetching.gif)
+![Fetching](https://github.com/unikraft/ide-vscode/blob/main/media/fetching.gif)
 
 ### Project preparing
 
 The command `Unikraft: Prepare` from the command palette prepare the project to build.
 
-![Preparing](https://github.com/unikraft/ide-vscode/blob/prototype/media/preparing.gif)
+![Preparing](https://github.com/unikraft/ide-vscode/blob/main/media/preparing.gif)
 
 ### Project building
 
 The command `Unikraft: Build project` from the command palette builds the unikernel based on the configuration file.
 
-![Building project](https://github.com/unikraft/ide-vscode/blob/prototype/media/building.gif)
+![Building project](https://github.com/unikraft/ide-vscode/blob/main/media/building.gif)
 
 ### Project running
 
@@ -60,19 +60,19 @@ The command `Unikraft: Run project` from the command palette runs the built unik
 
 If there are multiple images, the user has to choose one of them.
 
-![Running project](https://github.com/unikraft/ide-vscode/blob/prototype/media/running.gif)
+![Running project](https://github.com/unikraft/ide-vscode/blob/main/media/running.gif)
 
 ### Project cleaning
 
 The command `Unikraft: Clean` from the command palette clean a built project.
 
-![Cleaning project](https://github.com/unikraft/ide-vscode/blob/prototype/media/cleaning.gif)
+![Cleaning project](https://github.com/unikraft/ide-vscode/blob/main/media/cleaning.gif)
 
 ### Project propercleaning
 
 The command `Unikraft: Properclean` from the command palette clean all the builts project properly.
 
-![Propercleaning project](https://github.com/unikraft/ide-vscode/blob/prototype/media/proper-cleaning.gif)
+![Propercleaning project](https://github.com/unikraft/ide-vscode/blob/main/media/proper-cleaning.gif)
 
 ### External dependencies inspection
 
@@ -89,7 +89,7 @@ A library can either be removed from the project (it will still be stored on dis
 
 ### Removing and purging external libraries
 
-![Removing & purging libraries](https://github.com/unikraft/ide-vscode/blob/prototype/media/removing-purging-library.gif)
+![Removing & purging libraries](https://github.com/unikraft/ide-vscode/blob/main/media/removing-purging-library.gif)
 
 ### Intellisense
 
