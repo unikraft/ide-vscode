@@ -2,7 +2,7 @@
 
 import { OutputChannel, StatusBarItem } from 'vscode';
 import { Command } from './Command';
-import { showInfoMessage } from './utils';
+import { showInfoMessage, refreshViews } from './utils';
 
 export async function kraftUpdate(
     kraftChannel: OutputChannel,
@@ -18,6 +18,7 @@ export async function kraftUpdate(
         'Finished running kraft pkg update.',
         () => {
             kraftStatusBarItem.text = 'Unikraft';
+            refreshViews();
         }
     );
 
