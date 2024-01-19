@@ -36,18 +36,6 @@ The Unikraft hierarchy will be in `./.unikraft`, the library source code will be
 
 The command `Unikraft: Configure project` from the command palette allows configuring the project interactively by opening a terminal with `menu`.
 
-### Project fetching
-
-The command `Unikraft: Fetch` from the command palette allows fetching dependecies for the project.
-
-![Fetching](https://github.com/unikraft/ide-vscode/blob/main/media/fetching.gif)
-
-### Project preparing
-
-The command `Unikraft: Prepare` from the command palette prepare the project to build.
-
-![Preparing](https://github.com/unikraft/ide-vscode/blob/main/media/preparing.gif)
-
 ### Project building
 
 The command `Unikraft: Build project` from the command palette builds the unikernel based on the configuration file.
