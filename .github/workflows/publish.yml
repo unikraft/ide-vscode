@@ -6,15 +6,15 @@ on:
 jobs:
   publish:
     name: Release and publish
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 21
 
       - name: Install the dependencies
         run: npm i
