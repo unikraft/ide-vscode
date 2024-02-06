@@ -11,7 +11,7 @@
   },
   "homepage": "https://github.com/unikraft/ide-vscode/main/README.md",
   "engines": {
-    "vscode": "^1.75.0"
+    "vscode": "^1.86.0"
   },
   "keywords": [
     "unikraft",
@@ -19,6 +19,9 @@
   ],
   "categories": [
     "Other"
+  ],
+  "activationEvents": [
+    "onView:externalLibraries"
   ],
   "icon": "media/unikraft-logo.png",
   "galleryBanner": {
@@ -416,11 +419,11 @@
     "@types/command-exists": "^1.2.3",
     "@types/js-yaml": "^4.0.9",
     "@types/mocha": "^10.0.6",
-    "@types/node": "^20.10.6",
-    "@types/vscode": "^1.85.0",
-    "@typescript-eslint/eslint-plugin": "^6.17.0",
-    "@typescript-eslint/parser": "^6.17.0",
-    "@vscode/test-electron": "^2.3.8",
+    "@types/node": "^20.11.16",
+    "@types/vscode": "^1.86.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.56.0",
     "glob": "^10.3.10",
     "mocha": "^10.2.0",
@@ -430,6 +433,6 @@
   "dependencies": {
     "command-exists": "^1.2.9",
     "js-yaml": "^4.1.0",
-    "yaml": "^2.3.1"
+    "yaml": "^2.3.4"
   }
 }
