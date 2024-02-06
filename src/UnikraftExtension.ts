@@ -12,6 +12,7 @@ import { kraftRun } from './commands/run';
 import { kraftUpdate } from './commands/update';
 import { kraftClean } from './commands/clean';
 import { kraftProperclean } from './commands/properclean'
+import { kraftDeploy } from './commands/deploy'
 import { execSync } from 'child_process';
 import { env } from 'process';
 import { basename } from 'path';
@@ -191,7 +192,10 @@ export class UnikraftExtension {
             'unikraft.properclean',
             async () => kraftProperclean(this.kraftChannel, this.kraftStatusBarItem)
         );
-
+        const deployCommand = vscode.commands.registerCommand(
+            'unikraft.deploy',
+            async () => kraftDeploy(this.kraftChannel, this.kraftStatusBarItem)
+        );
         const addLibraryCommand = vscode.commands.registerCommand(
             'externalLibraries.addLibrary',
             () => this.externalLibrariesProvider.addLibrary(
@@ -223,6 +227,7 @@ export class UnikraftExtension {
         this.context.subscriptions.push(updateCommand);
         this.context.subscriptions.push(cleanCommand);
         this.context.subscriptions.push(propercleanCommand);
+        this.context.subscriptions.push(deployCommand);
         this.context.subscriptions.push(addLibraryCommand);
         this.context.subscriptions.push(removeLibraryCommand);
         this.context.subscriptions.push(purgeLibraryCommand);
