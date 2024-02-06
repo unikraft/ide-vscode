@@ -58,9 +58,15 @@ The command `Unikraft: Clean` from the command palette clean a built project.
 
 ### Project propercleaning
 
-The command `Unikraft: Properclean` from the command palette clean all the builts project properly.
+The command `Unikraft: Properclean` from the command palette cleans a built project fully.
 
 ![Propercleaning project](https://github.com/unikraft/ide-vscode/blob/main/media/proper-cleaning.gif)
+
+# Project deploying
+
+The command `Unikraft: Deploy` from the command palette deploys a project on the KraftCloud platform.
+
+![Deploying project](https://github.com/unikraft/ide-vscode/blob/main/media/deploying.gif)
 
 ### External dependencies inspection
 
@@ -158,6 +164,28 @@ This extension contributes the following settings:
 * `unikraft.build.forcePull`: Force pulling packages before building (default is False).
 * `unikraft.build.noUpdate`: Do not update package index before running the build (default is False).
 * `unikraft.build.buildLog`: Use the specified file to save the output from the build.
+
+**Deploy command configurations**
+* `unikraft.deploy.config`: Override the path to the KConfig .config file.
+* `unikraft.deploy.jobs`:  Allow N jobs at once (default is 0).
+* `unikraft.deploy.dbg`: Build the debuggable (symbolic) kernel image instead of the stripped image (default is False).
+* `unikraft.deploy.noCache`: Force a rebuild even if existing intermediate artifacts already exist (default is False).
+* `unikraft.deploy.noConfigure`: Do not run Unikraft's configure step before building (default is False).
+* `unikraft.deploy.noFast`: Do not use maximum parallelization when performing the build (default is False).
+* `unikraft.deploy.noFetch`: Do not run Unikraft's fetch step before building (default is False).
+* `unikraft.deploy.forcePull`: Force pulling packages before building (default is False).
+* `unikraft.deploy.noUpdate`: Do not update package index before running the build (default is False).
+* `unikraft.deploy.buildLog`: Use the specified file to save the output from the build.
+* `unikraft.deploy.envs`: The list of environmental variables to pass to the kernel.
+* `unikraft.deploy.memory`: The amount of memory to give to the kernel (default is 64).
+* `unikraft.deploy.name`: The name of the running instance.
+* `unikraft.deploy.noStart`: Do not instantly start an instance when deploying.
+* `unikraft.deploy.ports`: The list of ports to open in the kernel.
+* `unikraft.deploy.replicas`: The number of replicas for one image (default 0).
+* `unikraft.deploy.rootfs`: The path to the rootfs to use.
+* `unikraft.deploy.timeout`: The amount of seconds to use before timing out a request (default 10).
+* `unikraft.deploy.runtime`: The alternative runtime to use.
+* `unikraft.deploy.strategy`: What to do with artifact duplicates (default prompt).
 
 **Initialize command configurations**
 * `unikraft.initialize.library.noProvideCMain`: Do not provide provide main to the template (default is False).
