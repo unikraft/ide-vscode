@@ -11,7 +11,7 @@
   },
   "homepage": "https://github.com/unikraft/ide-vscode/main/README.md",
   "engines": {
-    "vscode": "^1.59.0"
+    "vscode": "^1.75.0"
   },
   "keywords": [
     "unikraft",
@@ -19,9 +19,6 @@
   ],
   "categories": [
     "Other"
-  ],
-  "activationEvents": [
-    "onView:externalLibraries"
   ],
   "icon": "media/unikraft-logo.png",
   "galleryBanner": {
@@ -187,6 +184,108 @@
                 "description": "provide patch directory to the template"
               }
             }
+          },
+          "deploy": {
+            "config": {
+              "type": "string",
+              "default": "",
+              "description": "Override the path to the KConfig .config file"
+            },
+            "jobs": {
+              "type": "integer",
+              "default": 0,
+              "description": "Allow N jobs at once"
+            },
+            "dbg": {
+              "type": "boolean",
+              "default": false,
+              "description": "Build the debuggable (symbolic) kernel image instead of the stripped image"
+            },
+            "noCache": {
+              "type": "boolean",
+              "default": false,
+              "description": "Force a rebuild even if existing intermediate artifacts already exist"
+            },
+            "noConfigure": {
+              "type": "boolean",
+              "default": false,
+              "description": "Do not run Unikraft's configure step before building"
+            },
+            "noFast": {
+              "type": "boolean",
+              "default": false,
+              "description": "Do not use maximum parallelization when performing the build"
+            },
+            "noFetch": {
+              "type": "boolean",
+              "default": false,
+              "description": "Do not run Unikraft's fetch step before building"
+            },
+            "forcePull": {
+              "type": "boolean",
+              "default": false,
+              "description": "Force pull packages before invoking Unikraft's build system"
+            },
+            "noUpdate": {
+              "type": "boolean",
+              "default": false,
+              "description": "Do not update package index before running the build"
+            },
+            "buildLog": {
+              "type": "string",
+              "default": "",
+              "description": "Use the specified file to save the output from the build"
+            },
+            "envs": {
+              "type": "array",
+              "default": [],
+              "description": "Set environment variables for the build"
+            },
+            "memory": {
+              "type": "integer",
+              "default": "64",
+              "description": "Assign memory to the unikernel"
+            },
+            "name": {
+              "type": "string",
+              "default": "",
+              "description": "Name of the instance"
+            },
+            "noStart": {
+              "type": "boolean",
+              "default": false,
+              "description": "Do not start the unikernel after deploying"
+            },
+            "ports": {
+              "type": "array",
+              "default": [],
+              "description": "Publish a machine's port(s) to the network"
+            },
+            "replicas": {
+              "type": "integer",
+              "default": 0,
+              "description": "Number of replicas to deploy"
+            },
+            "rootfs": {
+              "type": "string",
+              "default": "",
+              "description": "Use the specified rootfs for the unikernel"
+            },
+            "timeout": {
+              "type": "integer",
+              "default": 0,
+              "description": "Set the timeout for the unikernel"
+            },
+            "runtime": {
+              "type": "string",
+              "default": "",
+              "description": "Use the specified runtime for the unikernel"
+            },
+            "strategy": {
+              "type": "string",
+              "default": "",
+              "description": "Set the deployment strategy"
+            }
           }
         }
       }
@@ -263,6 +362,11 @@
       {
         "command": "unikraft.clean",
         "title": "Clean",
+        "category": "Unikraft"
+      },
+      {
+        "command": "unikraft.deploy",
+        "title": "Deploy",
         "category": "Unikraft"
       },
       {
