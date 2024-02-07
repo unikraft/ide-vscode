@@ -1,8 +1,8 @@
 {
   "name": "unikraft-ide-vscode",
-  "displayName": "Unikraft VSCode Extension",
+  "displayName": "Unikraft",
   "description": "Seamlessly build and manage Unikraft components from within VSCode!",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "unikraft",
   "license": "MIT",
   "repository": {
