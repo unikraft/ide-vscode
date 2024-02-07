@@ -26,15 +26,14 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
-ARG DEBIAN_VERSION=stable-20210902-slim
-ARG NGINX_VERSION=1.21.3-alpine
+ARG DEBIAN_VERSION=bookworm-20230725
 
 FROM debian:${DEBIAN_VERSION} AS devenv
 
 LABEL MAINTAINER="Alexander Jung <alex@unikraft.io>"
 
 ARG BUILD_REF=latest
-ARG NODE_VERSION=17
+ARG NODE_VERSION=20
 
 ENV NODE_ENV=development
 
@@ -50,7 +49,7 @@ RUN set -xe; \
       g++ \
       lsb-release \
       gnupg; \
-    curl -sLf -o /dev/null "https://deb.nodesource.com/node_${NODE_VERSION}.x/dists/buster/Release"; \
+    curl -sLf -o /dev/null "https://deb.nodesource.com/node_${NODE_VERSION}.x/dists/bookworm/Release"; \
     curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -; \
     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -; \
     echo "deb https://deb.nodesource.com/node_${NODE_VERSION}.x buster main" > /etc/apt/sources.list.d/nodesource.list; \
@@ -59,5 +58,4 @@ RUN set -xe; \
     apt-get install -y \
       nodejs; \
     npm install; \
-    npm install -g vsce
-
+    npm install -g @vscode/vsce
