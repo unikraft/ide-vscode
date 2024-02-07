@@ -409,11 +409,15 @@
   ],
   "scripts": {
     "test": "node ./out/test/runTest.js",
-    "vscode:prepublish": "npm install && npm run compile",
+    "vscode:prepublish": "npm install && npm run compile && npm run esbuild-base -- --minify",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts"
+    "lint": "eslint src --ext ts",
+    "esbuild-base": "esbuild ./src/UnikraftExtension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+    "test-compile": "tsc -p ./"
   },
   "devDependencies": {
     "@types/command-exists": "^1.2.3",
@@ -424,6 +428,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vscode/test-electron": "^2.3.9",
+    "esbuild": "^0.20.0",
     "eslint": "^8.56.0",
     "glob": "^10.3.10",
     "mocha": "^10.2.0",
