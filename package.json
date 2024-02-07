@@ -369,7 +369,7 @@
       },
       {
         "command": "unikraft.deploy",
-        "title": "Deploy",
+        "title": "Deploy to KraftCloud",
         "category": "Unikraft"
       },
       {

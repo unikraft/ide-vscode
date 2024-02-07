@@ -64,7 +64,7 @@ The command `Unikraft: Properclean` from the command palette cleans a built proj
 
 # Project deploying
 
-The command `Unikraft: Deploy` from the command palette deploys a project on the KraftCloud platform.
+The command `Unikraft: Deploy to KraftCloud` from the command palette deploys a project on the KraftCloud platform.
 
 ![Deploying project](https://github.com/unikraft/ide-vscode/blob/main/media/deploying.gif)
 
