@@ -4,6 +4,7 @@ import { ConfigurationTarget, workspace } from "vscode";
 import { getKraftYaml } from './../commands/utils';
 import { join } from 'path';
 import { getAllFiles, getKraftYamlLibs, getLibFiles } from "./utils";
+import { provideDefaultConfigC } from '../config'
 import { existsSync, readFileSync } from "fs";
 import { KraftLibType, KconfigType } from "../types/types";
 
@@ -23,9 +24,14 @@ export async function reloadIncludes(projectPath?: string) {
         libPaths.forEach(lib =>
             includeFiles = includeFiles.concat(getAllFiles(lib)));
     }
+
+    await provideDefaultConfigC();
+    const confC = workspace.getConfiguration().get("C_Cpp");
+    confC["default"]["includePath"] = includeFiles;
+
     await workspace.getConfiguration().update(
-        'C_Cpp.default.includePath',
-        includeFiles,
+        'C_Cpp',
+        confC,
         ConfigurationTarget.Workspace
     );
 }
@@ -48,9 +54,13 @@ export async function reloadConfig(projectPath: string, changedFile?: string) {
         .filter((def: string) => def.split('=')[1] === 'y')
         .map((def: string) => def.split('=')[0]);
 
+    await provideDefaultConfigC();
+    const confC = workspace.getConfiguration().get("C_Cpp");
+    confC["default"]["defines"] = config;
+
     await workspace.getConfiguration().update(
-        'C_Cpp.default.defines',
-        config,
+        'C_Cpp',
+        confC,
         ConfigurationTarget.Workspace
     );
 }

@@ -12,6 +12,7 @@ import * as utils from './commands/utils';
 import { Command } from './commands/Command';
 import { stringify as yamlStringify } from 'yaml';
 import * as types from './types/types';
+import { reloadIncludes } from './language/c';
 
 export class ExternalLibrariesProvider implements vscode.TreeDataProvider<Library> {
 
@@ -161,6 +162,7 @@ export class ExternalLibrariesProvider implements vscode.TreeDataProvider<Librar
 					);
 					kraftStatusBarItem.text = 'Unikraft';
 					utils.refreshViews();
+					reloadIncludes(projectPath);
 				}
 			);
 		} else {
@@ -171,6 +173,7 @@ export class ExternalLibrariesProvider implements vscode.TreeDataProvider<Librar
 				() => {
 					kraftStatusBarItem.text = 'Unikraft';
 					utils.refreshViews();
+					reloadIncludes(projectPath);
 				}
 			);
 		}
@@ -308,8 +311,8 @@ export class ExternalLibrariesProvider implements vscode.TreeDataProvider<Librar
 				false,
 				data,
 				(typeof data !== 'string') ?
-				vscode.TreeItemCollapsibleState.Collapsed :
-				vscode.TreeItemCollapsibleState.None,
+					vscode.TreeItemCollapsibleState.Collapsed :
+					vscode.TreeItemCollapsibleState.None,
 				this.projectPath,
 				this.kraftEnv
 			)
@@ -404,9 +407,9 @@ export class Library extends vscode.TreeItem {
 	}
 
 	iconPath = {
-		light: join(__filename, '..', '..', 'resources', 'light',
+		light: join(__filename, '..', '..', '..', 'resources', 'light',
 			this.getIconName()),
-		dark: join(__filename, '..', '..', 'resources', 'dark',
+		dark: join(__filename, '..', '..', '..', 'resources', 'dark',
 			this.getIconName())
 	};
 
@@ -475,6 +478,7 @@ export class Library extends vscode.TreeItem {
 					() => {
 						kraftStatusBarItem.text = 'Unikraft';
 						utils.refreshViews();
+						reloadIncludes(this.projectPath);
 					}
 				))
 			}
