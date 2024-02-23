@@ -198,9 +198,26 @@ export function fetchTargetsFromKraftYaml(
                     const tmp: string[] = target.split('/');
                     ret = tmp[0] == "firecracker" ? `fc-${tmp[1]}` : `${tmp[0]}-${tmp[1]}`;
                 } else {
-                    ret = target.platform == "firecracker" ? `fc-${target.architecture}` : `${target.platform}-${target.architecture}`;
+                    let plat: string = "";
+                    let arch: string = "";
+
+                    if (target.arch) {
+                        arch = target.arch;
+                    } else {
+                        arch = target.architecture
+                    }
+
+                    if (target.plat) {
+                        plat = target.plat;
+                    } else {
+                        plat = target.platform
+                    }
+
+                    if (plat && arch) {
+                        ret = plat == "firecracker" ? `fc-${arch}` : `${plat}-${arch}`;
+                    }
                 }
-                return ret
+                return ret;
             }
         );
     return targets;

@@ -28,266 +28,300 @@
     "color": "#0E2F5F",
     "theme": "dark"
   },
-  "main": "./out/extension.js",
+  "main": "./client/out/extension",
   "contributes": {
     "configuration": {
       "type": "object",
       "title": "Unikraft",
       "properties": {
+        "C_Cpp": {
+          "type": "object",
+          "description": "Configuration for `C/C++ Extension`.",
+          "properties": {
+            "default": {
+              "type": "object",
+              "properties": {
+                "includePath": {
+                  "type": "array",
+                  "description": "A list of headerfile directories."
+                },
+                "defines": {
+                  "type": "array",
+                  "description": "A list of preprocessor definitions for the IntelliSense engine to use while parsing files."
+                }
+              }
+            }
+          }
+        },
         "unikraft": {
-          "sources": {
-            "type": "string",
-            "default": "",
-            "description": "Specifies the directory where all the packages are stored, By default it is set by environment variable KRAFTKIT_PATHS_SOURCES or file `$HOME/.config/kraftkit/config.yaml`."
+          "enableCCompletion": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enables Server to show auto-completion elements for headerfiles in `.c/.h` extension files, By default it checks host machine if `C/C++ Extension` provided by microsoft is installed and sets itself."
           },
-          "manifests": {
-            "type": "string",
-            "default": "",
-            "description": "Specifies the directory where all the manifests are stored, By default it is set by environment variable KRAFTKIT_PATHS_MANIFESTS or file `$HOME/.config/kraftkit/config.yaml`."
-          },
-          "run": {
-            "detach": {
-              "type": "boolean",
-              "default": false,
-              "description": "Whether to run the unikernel in background"
-            },
-            "disableAcceleration": {
-              "type": "boolean",
-              "default": false,
-              "description": "Whether to disable acceleration of CPU (usually enables TCG)"
-            },
-            "initrd": {
+          "client": {
+            "sources": {
               "type": "string",
               "default": "",
-              "description": "Whether to run specified initrd unikernel"
+              "description": "Specifies the directory where all the packages are stored, By default it is set by environment variable KRAFTKIT_PATHS_SOURCES or file `$HOME/.config/kraftkit/config.yaml`."
             },
-            "ip": {
+            "manifests": {
               "type": "string",
               "default": "",
-              "description": "Assign the provided IP address"
+              "description": "Specifies the directory where all the manifests are stored, By default it is set by environment variable KRAFTKIT_PATHS_MANIFESTS or file `$HOME/.config/kraftkit/config.yaml`."
             },
-            "kernelArguments": {
-              "type": "array",
-              "default": [],
-              "description": "Set additional kernel arguments"
-            },
-            "macAddress": {
-              "type": "string",
-              "default": "",
-              "description": "Assign the provided MAC address"
-            },
-            "memory": {
-              "type": "string",
-              "default": "64M",
-              "description": "Assign memory to the unikernel"
-            },
-            "name": {
-              "type": "string",
-              "default": "",
-              "description": "Name of the instance"
-            },
-            "network": {
-              "type": "string",
-              "default": "",
-              "description": "Attach instance to the provided network in the format <driver>:<network>"
-            },
-            "ports": {
-              "type": "array",
-              "default": [],
-              "description": "Publish a machine's port(s) to the host"
-            },
-            "remove": {
-              "type": "boolean",
-              "default": false,
-              "description": "Whether to automatically remove the unikernel when it shutsdown"
-            },
-            "as": {
-              "type": "string",
-              "default": "",
-              "description": "Force a specific runner"
-            },
-            "volume": {
-              "type": "string",
-              "default": "",
-              "description": "Bind a volume to the instance"
-            },
-            "symbolic": {
-              "type": "boolean",
-              "default": false,
-              "description": "Whether to use the debuggable (symbolic) unikernel"
-            }
-          },
-          "build": {
-            "config": {
-              "type": "string",
-              "default": "",
-              "description": "Override the path to the KConfig .config file"
-            },
-            "jobs": {
-              "type": "integer",
-              "default": 0,
-              "description": "Allow N jobs at once"
-            },
-            "dbg": {
-              "type": "boolean",
-              "default": false,
-              "description": "Build the debuggable (symbolic) kernel image instead of the stripped image"
-            },
-            "noCache": {
-              "type": "boolean",
-              "default": false,
-              "description": "Force a rebuild even if existing intermediate artifacts already exist"
-            },
-            "noConfigure": {
-              "type": "boolean",
-              "default": false,
-              "description": "Do not run Unikraft's configure step before building"
-            },
-            "noFast": {
-              "type": "boolean",
-              "default": false,
-              "description": "Do not use maximum parallelization when performing the build"
-            },
-            "noFetch": {
-              "type": "boolean",
-              "default": false,
-              "description": "Do not run Unikraft's fetch step before building"
-            },
-            "noPull": {
-              "type": "boolean",
-              "default": false,
-              "description": "Do not pull packages before invoking Unikraft's build system"
-            },
-            "noUpdate": {
-              "type": "boolean",
-              "default": false,
-              "description": "Do not update package index before running the build"
-            },
-            "buildLog": {
-              "type": "string",
-              "default": "",
-              "description": "Use the specified file to save the output from the build"
-            }
-          },
-          "initialize": {
-            "library": {
-              "noProvideMain": {
+            "run": {
+              "detach": {
                 "type": "boolean",
                 "default": false,
-                "description": "Do not provide provide main to the template"
+                "description": "Whether to run unikernel in background"
               },
-              "gitInit": {
-                "type": "boolean",
-                "default": true,
-                "description": "Init git through the creating library"
-              },
-              "withPatchdir": {
+              "disableAcceleration": {
                 "type": "boolean",
                 "default": false,
-                "description": "provide patch directory to the template"
+                "description": "Whether to disable acceleration of CPU (usually enables TCG)"
+              },
+              "initrd": {
+                "type": "string",
+                "default": "",
+                "description": "Whether to run specified initrd unikernel"
+              },
+              "ip": {
+                "type": "string",
+                "default": "",
+                "description": "Assign the provided IP address"
+              },
+              "kernelArguments": {
+                "type": "array",
+                "default": [],
+                "description": "Set additional kernel arguments"
+              },
+              "macAddress": {
+                "type": "string",
+                "default": "",
+                "description": "Assign the provided MAC address"
+              },
+              "memory": {
+                "type": "string",
+                "default": "64M",
+                "description": "Assign MB memory to the unikernel"
+              },
+              "name": {
+                "type": "string",
+                "default": "",
+                "description": "Name of the instance"
+              },
+              "network": {
+                "type": "string",
+                "default": "",
+                "description": "Attach instance to the provided network in the format <driver>:<network>"
+              },
+              "ports": {
+                "type": "array",
+                "default": [],
+                "description": "Publish a machine's port(s) to the host"
+              },
+              "remove": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether to automatically remove the unikernel when it shutsdown"
+              },
+              "as": {
+                "type": "string",
+                "default": "",
+                "description": "Force a specific runner"
+              },
+              "volume": {
+                "type": "string",
+                "default": "",
+                "description": "Bind a volume to the instance"
+              },
+              "symbolic": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether to use the debuggable (symbolic) unikernel"
+              }
+            },
+            "build": {
+              "config": {
+                "type": "string",
+                "default": "",
+                "description": "Override the path to the KConfig .config file"
+              },
+              "jobs": {
+                "type": "integer",
+                "default": 0,
+                "description": "Allow N jobs at once"
+              },
+              "dbg": {
+                "type": "boolean",
+                "default": false,
+                "description": "Build the debuggable (symbolic) kernel image instead of the stripped image"
+              },
+              "noCache": {
+                "type": "boolean",
+                "default": false,
+                "description": "Force a rebuild even if existing intermediate artifacts already exist"
+              },
+              "noConfigure": {
+                "type": "boolean",
+                "default": false,
+                "description": "Do not run Unikraft's configure step before building"
+              },
+              "noFast": {
+                "type": "boolean",
+                "default": false,
+                "description": "Do not use maximum parallelization when performing the build"
+              },
+              "noFetch": {
+                "type": "boolean",
+                "default": false,
+                "description": "Do not run Unikraft's fetch step before building"
+              },
+              "noPull": {
+                "type": "boolean",
+                "default": false,
+                "description": "Do not pull packages before invoking Unikraft's build system"
+              },
+              "noUpdate": {
+                "type": "boolean",
+                "default": false,
+                "description": "Do not update package index before running the build"
+              },
+              "buildLog": {
+                "type": "string",
+                "default": "",
+                "description": "Use the specified file to save the output from the build"
+              }
+            },
+            "initialize": {
+              "library": {
+                "noProvideMain": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Do not provide provide-main to the template"
+                },
+                "gitInit": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Init git through the creating library"
+                },
+                "withPatchedir": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "provide patch directory to the template"
+                }
+              }
+            },
+            "deploy": {
+              "config": {
+                "type": "string",
+                "default": "",
+                "description": "Override the path to the KConfig .config file"
+              },
+              "jobs": {
+                "type": "integer",
+                "default": 0,
+                "description": "Allow N jobs at once"
+              },
+              "dbg": {
+                "type": "boolean",
+                "default": false,
+                "description": "Build the debuggable (symbolic) kernel image instead of the stripped image"
+              },
+              "noCache": {
+                "type": "boolean",
+                "default": false,
+                "description": "Force a rebuild even if existing intermediate artifacts already exist"
+              },
+              "noConfigure": {
+                "type": "boolean",
+                "default": false,
+                "description": "Do not run Unikraft's configure step before building"
+              },
+              "noFast": {
+                "type": "boolean",
+                "default": false,
+                "description": "Do not use maximum parallelization when performing the build"
+              },
+              "noFetch": {
+                "type": "boolean",
+                "default": false,
+                "description": "Do not run Unikraft's fetch step before building"
+              },
+              "forcePull": {
+                "type": "boolean",
+                "default": false,
+                "description": "Force pull packages before invoking Unikraft's build system"
+              },
+              "noUpdate": {
+                "type": "boolean",
+                "default": false,
+                "description": "Do not update package index before running the build"
+              },
+              "buildLog": {
+                "type": "string",
+                "default": "",
+                "description": "Use the specified file to save the output from the build"
+              },
+              "envs": {
+                "type": "array",
+                "default": [],
+                "description": "Set environment variables for the build"
+              },
+              "memory": {
+                "type": "integer",
+                "default": "64",
+                "description": "Assign memory to the unikernel"
+              },
+              "name": {
+                "type": "string",
+                "default": "",
+                "description": "Name of the instance"
+              },
+              "noStart": {
+                "type": "boolean",
+                "default": false,
+                "description": "Do not start the unikernel after deploying"
+              },
+              "ports": {
+                "type": "array",
+                "default": [],
+                "description": "Publish a machine's port(s) to the network"
+              },
+              "replicas": {
+                "type": "integer",
+                "default": 0,
+                "description": "Number of replicas to deploy"
+              },
+              "rootfs": {
+                "type": "string",
+                "default": "",
+                "description": "Use the specified rootfs for the unikernel"
+              },
+              "timeout": {
+                "type": "integer",
+                "default": 0,
+                "description": "Set the timeout for the unikernel"
+              },
+              "runtime": {
+                "type": "string",
+                "default": "",
+                "description": "Use the specified runtime for the unikernel"
+              },
+              "strategy": {
+                "type": "string",
+                "default": "",
+                "description": "Set the deployment strategy"
               }
             }
           },
-          "deploy": {
-            "config": {
-              "type": "string",
-              "default": "",
-              "description": "Override the path to the KConfig .config file"
-            },
-            "jobs": {
-              "type": "integer",
-              "default": 0,
-              "description": "Allow N jobs at once"
-            },
-            "dbg": {
-              "type": "boolean",
-              "default": false,
-              "description": "Build the debuggable (symbolic) kernel image instead of the stripped image"
-            },
-            "noCache": {
-              "type": "boolean",
-              "default": false,
-              "description": "Force a rebuild even if existing intermediate artifacts already exist"
-            },
-            "noConfigure": {
-              "type": "boolean",
-              "default": false,
-              "description": "Do not run Unikraft's configure step before building"
-            },
-            "noFast": {
-              "type": "boolean",
-              "default": false,
-              "description": "Do not use maximum parallelization when performing the build"
-            },
-            "noFetch": {
-              "type": "boolean",
-              "default": false,
-              "description": "Do not run Unikraft's fetch step before building"
-            },
-            "forcePull": {
-              "type": "boolean",
-              "default": false,
-              "description": "Force pull packages before invoking Unikraft's build system"
-            },
-            "noUpdate": {
-              "type": "boolean",
-              "default": false,
-              "description": "Do not update package index before running the build"
-            },
-            "buildLog": {
-              "type": "string",
-              "default": "",
-              "description": "Use the specified file to save the output from the build"
-            },
-            "envs": {
-              "type": "array",
-              "default": [],
-              "description": "Set environment variables for the build"
-            },
-            "memory": {
-              "type": "integer",
-              "default": "64",
-              "description": "Assign memory to the unikernel"
-            },
-            "name": {
-              "type": "string",
-              "default": "",
-              "description": "Name of the instance"
-            },
-            "noStart": {
-              "type": "boolean",
-              "default": false,
-              "description": "Do not start the unikernel after deploying"
-            },
-            "ports": {
-              "type": "array",
-              "default": [],
-              "description": "Publish a machine's port(s) to the network"
-            },
-            "replicas": {
-              "type": "integer",
-              "default": 0,
-              "description": "Number of replicas to deploy"
-            },
-            "rootfs": {
-              "type": "string",
-              "default": "",
-              "description": "Use the specified rootfs for the unikernel"
-            },
-            "timeout": {
-              "type": "integer",
-              "default": 0,
-              "description": "Set the timeout for the unikernel"
-            },
-            "runtime": {
-              "type": "string",
-              "default": "",
-              "description": "Use the specified runtime for the unikernel"
-            },
-            "strategy": {
-              "type": "string",
-              "default": "",
-              "description": "Set the deployment strategy"
+          "server": {
+            "maxNumberOfProblems": {
+              "scope": "resource",
+              "type": "number",
+              "default": 100,
+              "description": "Controls the maximum number of problems can be produced by the server."
             }
           }
         }
@@ -369,7 +403,7 @@
       },
       {
         "command": "unikraft.deploy",
-        "title": "Deploy to KraftCloud",
+        "title": "Deploy",
         "category": "Unikraft"
       },
       {
@@ -408,16 +442,18 @@
     "ms-python.python"
   ],
   "scripts": {
-    "test": "node ./out/test/runTest.js",
-    "vscode:prepublish": "npm install && npm run compile && npm run esbuild-base -- --minify",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "test": "node ./client/out/test/runTest.js",
+    "vscode:prepublish": "npm install && npm run compile && npm run esbuild-base-client -- --minify && npm run esbuild-base-server -- --minify",
+    "compile": "tsc -b",
+    "watch": "tsc -b -w",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "esbuild-base": "esbuild ./src/UnikraftExtension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
-    "esbuild": "npm run esbuild-base -- --sourcemap",
-    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "test-compile": "tsc -p ./"
+    "lint": "eslint ./client/src ./server/src --ext .ts",
+    "esbuild-base-client": "esbuild ./client/src/extension.ts --bundle --outfile=client/out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild-base-server": "esbuild ./server/src/server.ts --bundle --outfile=server/out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base-client -- --sourcemap && npm run esbuild-base-server -- --sourcemap",
+    "esbuild-watch-client": "npm run esbuild-base-client -- --sourcemap --watch",
+    "esbuild-watch-server": "npm run esbuild-base-server -- --sourcemap --watch",
+    "test-compile": "tsc -b"
   },
   "devDependencies": {
     "@types/command-exists": "^1.2.3",
@@ -438,6 +474,9 @@
   "dependencies": {
     "command-exists": "^1.2.9",
     "js-yaml": "^4.1.0",
+    "vscode-languageclient": "^8.1.0",
+    "vscode-languageserver": "^8.1.0",
+    "vscode-languageserver-textdocument": "^1.0.11",
     "yaml": "^2.3.4"
   }
 }

@@ -18,6 +18,7 @@ import { env } from 'process';
 import { basename } from 'path';
 import { existsSync, readFileSync, rmSync } from 'fs';
 import { sync as commandExistsSync } from 'command-exists';
+import { enableCCompletion } from './config'
 
 export class UnikraftExtension {
     constructor(private context: vscode.ExtensionContext) { }
@@ -49,7 +50,7 @@ export class UnikraftExtension {
         this.kraftStatusBarItem.show();
     }
 
-    private postSetup() {
+    private async postSetup() {
         vscode.window.onDidCloseTerminal(t => {
             this.externalLibSetup();
             if (t.exitStatus) {
@@ -90,7 +91,7 @@ export class UnikraftExtension {
             }
         });
 
-        vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
+        vscode.workspace.onDidSaveTextDocument(async (document: vscode.TextDocument) => {
             this.externalLibSetup();
             let isKraftfile: boolean = false;
             const fileName: string = basename(document.fileName);
@@ -105,15 +106,25 @@ export class UnikraftExtension {
             })
 
             if (isKraftfile) {
-                setupPythonSupport(projectPath);
-                reloadIncludes(projectPath);
-                reloadConfig(projectPath);
-            }
-
-            if (fileName.startsWith('.config')) {
-                reloadConfig(projectPath, fileName);
+                await setupPythonSupport(projectPath);
+                await reloadIncludes(projectPath);
+                await reloadConfig(projectPath);
+            } else if (fileName.startsWith('.config')) {
+                await reloadConfig(projectPath, fileName);
             }
         });
+
+        // updating workspace configuration with C headerfiles.
+        const projectPath = utils.getProjectPath();
+        if (!projectPath) {
+            return
+        }
+
+        await reloadIncludes(projectPath);
+        await reloadConfig(projectPath);
+
+        // Checking if `C/C++` Extension is installed on the system.
+        await enableCCompletion();
     }
 
     private initExtension() {

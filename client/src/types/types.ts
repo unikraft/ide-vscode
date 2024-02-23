@@ -21,8 +21,10 @@ export type KconfigType = {
 } | string[] | undefined
 
 export type KraftTargetType = {
-    architecture: string
-    platform: string
+    architecture: string,
+    arch: string,
+    platform: string,
+    plat: string
 } | string
 
 export type KraftEnvType = NodeJS.ProcessEnv & {

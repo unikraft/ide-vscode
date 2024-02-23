@@ -66,7 +66,7 @@ async function deployNonInteractively(
 
     // If token is not set ask for it
     if (token === "") {
-        let tokenCheck = await window.showInputBox({
+        const tokenCheck = await window.showInputBox({
             placeHolder: 'Enter your token',
             password: true,
             ignoreFocusOut: true
@@ -80,7 +80,7 @@ async function deployNonInteractively(
 
     // If metro is not set ask for it
     if (metro === "") {
-        let metroCheck = await window.showInputBox({
+        const metroCheck = await window.showInputBox({
             placeHolder: 'Enter your metro',
             ignoreFocusOut: true
         });
@@ -93,7 +93,7 @@ async function deployNonInteractively(
 
     // If user is not set ask for it
     if (user === "") {
-        let userCheck = await window.showInputBox({
+        const userCheck = await window.showInputBox({
             placeHolder: 'Enter your user',
             ignoreFocusOut: true
         });
@@ -147,7 +147,7 @@ async function deployInteractively(
 
     // If token is not set ask for it
     if (token === "") {
-        let tokenCheck = await window.showInputBox({
+        const tokenCheck = await window.showInputBox({
             placeHolder: 'Enter your token',
             password: true,
             ignoreFocusOut: true
@@ -161,7 +161,7 @@ async function deployInteractively(
 
     // If metro is not set ask for it
     if (metro === "") {
-        let metroCheck = await window.showInputBox({
+        const metroCheck = await window.showInputBox({
             placeHolder: 'Enter your metro',
             ignoreFocusOut: true
         });
@@ -174,7 +174,7 @@ async function deployInteractively(
 
     // If user is not set ask for it
     if (user === "") {
-        let userCheck = await window.showInputBox({
+        const userCheck = await window.showInputBox({
             placeHolder: 'Enter your user',
             ignoreFocusOut: true
         });

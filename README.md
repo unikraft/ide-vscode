@@ -62,7 +62,7 @@ The command `Unikraft: Properclean` from the command palette cleans a built proj
 
 ![Propercleaning project](https://github.com/unikraft/ide-vscode/blob/main/media/proper-cleaning.gif)
 
-# Project deploying
+### Project deploying
 
 The command `Unikraft: Deploy to KraftCloud` from the command palette deploys a project on the KraftCloud platform.
 
@@ -195,6 +195,61 @@ This extension contributes the following settings:
 ![helloworld](https://github.com/unikraft/ide-vscode/blob/prototype/media/httpreply.gif)
 
 Besides using `settings.json`, these settings can also be edited when clicking CTRL + Comma and searching for their names.
+
+## LSP (Language Server Protocol) Features
+
+Currently, LSP provide following features:
+
+  * Auto-Completion for Kraftfile attributes.
+  * Hover feature for Kraftfile attributes.
+  * Validates if Kraftfile contains all the required attributes.
+  * Auto-Completion for headerfile paths when importing in C/C++ files (Displays a list of available `*.h` files in `$PWD/.unikraft`).
+  * Validates if null or repeated imports are there in `C/C++` files.
+
+### Note:
+
+  * To enable `C/C++` auto-completion or validation feature provided by LSP enable `unikraft.enableCCompletion` attribute in `$PWD/.vscode/settings.json` file. By default this attribute is set by extension itself based on the installation of [`C/C++ Extension` provided by microsoft](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) on the host machine.
+  * LSP server read `C_Cpp.default.includePath` attribute from `$PWD/.vscode/settings.json` file set by client to show a list of headerfiles to user present in `$PWD/.unikraft` dir to include when user imports headerfile in any `C/C++` file.
+
+### Auto-Completion
+
+LSP provide auto-completion feature for all the attributes of `Kraftfile` and only for importing in `C/C++` files.
+
+#### Kraftfile Auto-Completion feature
+
+![Kraftfile auto-completion](https://github.com/unikraft/ide-vscode/blob/main/media/kraftfile-auto-completion.gif)
+
+**By simply typing `unikraft` in a Kraftfile minimal attributes for a Kraftfile can be auto-completed**
+
+![Kraftfile auto-completion for `unikraft` attribute](https://github.com/unikraft/ide-vscode/blob/main/media/kraftfile-unikraft-auto-completion.gif)
+
+#### `C/C++` language Auto-Completion feature
+
+**Importing `*.h` files in a `C/C++` file**
+
+![C/C++ auto-completion](https://github.com/unikraft/ide-vscode/blob/main/media/c-auto-completion.gif)
+
+*Currenly, Only the `*.h` files present inside `$PWD/.unikraft` dir are being displayed for auto-completion in any `C/C++` file inside the workspace.*
+
+### Hover
+
+LSP provide Hover feature only for all the attributes of `Kraftfile`.
+
+#### Kraftfile Hover feature
+
+![Hovering Kraftfile](https://github.com/unikraft/ide-vscode/blob/main/media/kraftfile-hovering.gif)
+
+### Validation
+
+LSP provide validation feature only for the required attributes of `Kraftfile` and only for importing in `C/C++` files.
+
+#### Kraftfile Validation
+
+![Kraftfile validation](https://github.com/unikraft/ide-vscode/blob/main/media/kraftfile-validation.gif)
+
+#### `C/C++` file imports Validation
+
+![C/C++ validation](https://github.com/unikraft/ide-vscode/blob/main/media/c-validation.gif)
 
 ## Known Issues
 
