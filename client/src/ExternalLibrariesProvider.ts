@@ -73,10 +73,10 @@ export class ExternalLibrariesProvider implements vscode.TreeDataProvider<Librar
 			return Promise.resolve(this.getData(element));
 		}
 
-		const kraftYaml = utils.getKraftYaml(this.projectPath);
+		let kraftYaml = utils.getKraftYaml(this.projectPath);
 		if (!kraftYaml) {
-			vscode.window.showErrorMessage("could not fetch Kraftfile");
-			return Promise.resolve([]);
+			// An empty Kraftfile
+			kraftYaml = {} as types.KraftYamlType
 		}
 		const core = this.getCore(kraftYaml);
 		const presentLibs = this.getPresentLibs(kraftYaml);
