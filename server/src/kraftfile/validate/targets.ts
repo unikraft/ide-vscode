@@ -12,7 +12,7 @@ import { KraftTargetType, KraftYamlType } from '../types';
 import { unikraftLanguageServer } from '../../utils';
 
 export function validateTargets(document: TextDocument, kraftfile: KraftYamlType): Diagnostic[] {
-    let diagnostics: Diagnostic[] = [];
+    const diagnostics: Diagnostic[] = [];
     const docText = document.getText();
     const docTextLen = docText.trim().length;
 

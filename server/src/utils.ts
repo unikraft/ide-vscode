@@ -62,8 +62,8 @@ export function getCurrentWord(char: number, lineStr: string): string | undefine
 
     let i: number = 0;
     for (i = char; i >= 0 && lineStr[i] != " "; i--);
-    let startInd = i + 1;
+    const startInd = i + 1;
     for (i = char; i < lineStr.length && lineStr[i] != " "; i++);
-    let lastInd = i;
+    const lastInd = i;
     return lineStr.slice(startInd, lastInd);
 }

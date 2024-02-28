@@ -27,6 +27,7 @@ import { kraftfileCompletionItems } from './kraftfile/complete';
 import { readdirSync } from 'fs';
 import { cCompletionItems } from './c/complete';
 import { getKraftfileHoverItem } from './kraftfile/hover';
+import { UnikraftServerConfigType, UnikraftConfigType } from './types';
 
 // **************Main file for LSP server implementation**************
 
@@ -43,9 +44,9 @@ let hasDiagnosticRelatedInformationCapability: boolean = false;
 let hasUnikraftDir: boolean = false;
 let workspaceDir: string = '';
 let currentUriText: string = '';
-let workspaceUnikraftConfig: any = undefined;
+let workspaceUnikraftConfig: UnikraftConfigType = {} as UnikraftConfigType;
 let enabledCCompletion: boolean = false;
-let includePath: string[] = [];
+const includePath: string[] = [];
 
 connection.onInitialize((params: InitializeParams) => {
 	const capabilities = params.capabilities;
@@ -91,7 +92,7 @@ connection.onInitialized(async () => {
 		connection.client.register(DidChangeConfigurationNotification.type, undefined);
 	}
 	if (hasWorkspaceFolderCapability) {
-		connection.workspace.onDidChangeWorkspaceFolders(_event => {
+		connection.workspace.onDidChangeWorkspaceFolders(() => {
 			connection.console.log('Workspace folder change event received.');
 		});
 	}
@@ -149,7 +150,7 @@ documents.onDidChangeContent(e => {
 	validate(e.document);
 });
 
-connection.onDidChangeWatchedFiles(_change => {
+connection.onDidChangeWatchedFiles(() => {
 	// Monitored files have change in VSCode
 	connection.console.log('We received an file change event');
 });
@@ -201,23 +202,23 @@ documents.listen(connection);
 connection.listen();
 
 // getDocumentSettings() returns settings for a specific workspace document.
-function getDocumentSettings(resource: string): Thenable<Settings> | any {
+function getDocumentSettings(resource: string): Thenable<Settings> | UnikraftServerConfigType {
 	if (!hasConfigurationCapability) {
 		return Promise.resolve(globalServerSettings);
 	}
-	let result = documentSettings.get(resource);
+	const result = documentSettings.get(resource);
 	if (!result) {
-		result = getWorkspaceServerConfig(resource);
+		return getWorkspaceServerConfig(resource);
 	}
 	return result;
 }
 
 // getWorkspaceServerConfig() returns workspace `unikraft.server` configuration.
-export function getWorkspaceServerConfig(resource: string): any {
+export function getWorkspaceServerConfig(resource: string): UnikraftServerConfigType {
 	if (
 		workspaceUnikraftConfig && workspaceUnikraftConfig["server"]
 	) {
-		let result = workspaceUnikraftConfig["server"];
+		const result = workspaceUnikraftConfig["server"];
 		documentSettings.set(resource, Promise.resolve(result));
 		return result;
 	}
@@ -245,7 +246,7 @@ async function validate(document: TextDocument) {
 
 // isUnikraftDirExistInWorkspace() Checks if `$PWD/.unikraft/` dir exist.
 function isUnikraftDirExistInWorkspace() {
-	connection.workspace.getWorkspaceFolders().then((res): any => {
+	connection.workspace.getWorkspaceFolders().then((res) => {
 		if (res === null) {
 			hasUnikraftDir = false;
 			return;
@@ -259,7 +260,7 @@ function isUnikraftDirExistInWorkspace() {
 // initGlobalVars() initialises the global variables `workspaceUnikraftConfig` & `enabledCCompletion`.
 async function initGlobalVars() {
 	// Fetching workspace configuration.
-	let workspaceSettings = await connection.workspace.getConfiguration();
+	const workspaceSettings = await connection.workspace.getConfiguration();
 
 	if (workspaceSettings && workspaceSettings["unikraft"]) {
 		workspaceUnikraftConfig = workspaceSettings["unikraft"]

@@ -5,7 +5,8 @@ export const codeBlockStr = `\`\`\`\n`;
 export const minimalKraftfile =
     `spec: "v0.6"\n` +
     `name: helloworld\n` +
-    `unikraft: stable\n` +
+    `unikraft:\n` +
+    `  version: stable\n` +
     `targets:\n` +
     `  - plat: qemu\n` +
     `    arch: x86_64\n`;
