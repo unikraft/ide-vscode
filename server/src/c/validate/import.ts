@@ -14,7 +14,7 @@ export function validateImports(document: TextDocument): Diagnostic[] {
     const diagnostics: Diagnostic[] = [];
     const docText = document.getText();
     const docTextLines = docText.split('\n');
-    let importedStrs: {
+    const importedStrs: {
         lineStr: string,
         lineNum: number
     }[] = [];

@@ -12,8 +12,8 @@ import { KraftYamlType } from '../types';
 import { unikraftLanguageServer } from '../../utils';
 
 export function validateSpecification(document: TextDocument, kraftfile: KraftYamlType): Diagnostic[] {
-    let diagnostics: Diagnostic[] = [];
-    let docTextLen = document.getText().trim().length;
+    const diagnostics: Diagnostic[] = [];
+    const docTextLen = document.getText().trim().length;
 
     if (!kraftfile || (!kraftfile.specification && !kraftfile.spec)) {
         diagnostics.push({

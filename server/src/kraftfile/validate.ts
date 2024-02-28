@@ -4,7 +4,7 @@ import {
     Diagnostic,
     DiagnosticSeverity,
 } from 'vscode-languageserver/node';
-const yaml = require('js-yaml');
+import * as yaml from 'js-yaml'
 
 import {
     TextDocument
@@ -21,15 +21,17 @@ export function validateKraftfile(document: TextDocument): Diagnostic[] {
     let kraftfile: KraftYamlType;
 
     try {
-        kraftfile = yaml.load(docText);
-    } catch (err: any) {
+        kraftfile = yaml.load(docText) as KraftYamlType;
+    } catch (err) {
+        const msg: string = err instanceof Error ? err.message : String(err);
+
         const diagnostic: Diagnostic = {
             severity: DiagnosticSeverity.Error,
             range: {
                 start: document.positionAt(docText.length + 1),
                 end: document.positionAt(docText.length + 2)
             },
-            message: err.message,
+            message: msg,
             source: unikraftLanguageServer
         };
         diagnostics.push(diagnostic);

@@ -4,7 +4,7 @@ export interface HoverItem {
     label: string,
     detail: string,
     documentation: string
-};
+}
 
 // A minimal Kraftfile type only for the attributes that are used by code.
 export type KraftYamlType = {
