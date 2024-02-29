@@ -35,7 +35,7 @@ export function platformCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `plat: qemu\n`,
+            insertText: `plat: `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-target-plat',
             detail: detail,
@@ -50,7 +50,7 @@ export function platformCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `platform: qemu\n`,
+            insertText: `platform: `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-target-platform',
             detail: detail,

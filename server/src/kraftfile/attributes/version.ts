@@ -44,7 +44,7 @@ export function versionCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `version: stable\n`,
+            insertText: `version: `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-version',
             detail: detail,

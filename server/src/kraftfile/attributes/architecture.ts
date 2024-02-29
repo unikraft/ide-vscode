@@ -35,7 +35,7 @@ export function architectureCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `arch: x86_64\n`,
+            insertText: `arch: `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-target-arch',
             detail: detail,
@@ -50,7 +50,7 @@ export function architectureCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `architecture: x86_64\n`,
+            insertText: `architecture: `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-target-architecture',
             detail: detail,

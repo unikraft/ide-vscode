@@ -39,7 +39,7 @@ export function templateCompletionItem(): CompletionItem[] {
                 detail: " short-hand, string",
                 description: unikraft
             },
-            insertText: `template: app/elfloader:stable\n`,
+            insertText: `template: \n`,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-template-short',
             detail: detail,
@@ -55,8 +55,8 @@ export function templateCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `template:\n` +
-                `  name: elfloader\n` +
-                `  version: stable\n`,
+                `  name: \n` +
+                `  version: \n`,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-template-long',
             detail: detail,

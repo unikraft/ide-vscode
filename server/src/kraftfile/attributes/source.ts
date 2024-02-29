@@ -39,7 +39,7 @@ export function sourceCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `source: https://github.com/SOURCE_URL\n`,
+            insertText: `source: `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-source',
             detail: detail,
