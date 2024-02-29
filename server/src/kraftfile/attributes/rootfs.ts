@@ -32,7 +32,7 @@ export function rootfsCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `rootfs: rel/abs/path/to\n`,
+            insertText: `rootfs: `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-rootfs',
             detail: detail,

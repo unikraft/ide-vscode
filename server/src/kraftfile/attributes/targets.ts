@@ -47,7 +47,7 @@ export function targetsCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `targets:\n` +
-                `  - qemu/x86_64\n`,
+                `  - `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-targets-short',
             detail: detail,
@@ -63,8 +63,8 @@ export function targetsCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `targets:\n` +
-                `  - platform: qemu\n` +
-                `    architecture: x86_64\n`,
+                `  - platform: \n` +
+                `    architecture: \n`,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-targets-long',
             detail: detail,
@@ -80,9 +80,9 @@ export function targetsCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `targets:\n` +
-                `  - name: helloworld-qemu-x86_64\n` +
-                `    platform: qemu\n` +
-                `    architecture: x86_64\n` +
+                `  - name: \n` +
+                `    platform: \n` +
+                `    architecture: \n` +
                 `    kconfig:\n` +
                 `      CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS: "y"\n`,
             kind: CompletionItemKind.Keyword,

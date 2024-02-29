@@ -37,7 +37,7 @@ export function cmdCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `cmd: "-c /nginx/conf/nginx.conf"\n`,
+            insertText: `cmd: ""`,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-cmd-string',
             detail: detail,
@@ -52,7 +52,7 @@ export function cmdCompletionItem(): CompletionItem[] {
                 detail: " in-line array",
                 description: unikraft
             },
-            insertText: `cmd: ["-c", "/nginx/conf/nginx.conf"]\n`,
+            insertText: `cmd: [""]`,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-cmd-inline',
             detail: detail,
@@ -68,8 +68,7 @@ export function cmdCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `cmd:\n` +
-                `  - -c\n` +
-                `  - /nginx/conf/nginx.conf\n`,
+                `  - `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-cmd-multiline',
             detail: detail,

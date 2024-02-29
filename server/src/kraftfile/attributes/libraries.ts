@@ -39,8 +39,7 @@ export function librariesCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `libraries:\n` +
-                `  nginx:\n` +
-                `    version: stable\n`,
+                `  `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-libraries',
             detail: detail,

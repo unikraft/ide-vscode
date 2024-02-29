@@ -29,7 +29,7 @@ export function runtimeCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `runtime: unikraft.org/python3:latest\n`,
+            insertText: `runtime: `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-runtime',
             detail: detail,

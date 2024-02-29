@@ -27,7 +27,7 @@ export function nameCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `name: helloworld\n`,
+            insertText: `name: `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-name',
             detail: detail,

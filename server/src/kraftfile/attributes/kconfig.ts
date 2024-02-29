@@ -52,7 +52,7 @@ export function kconfigCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `kconfig:\n` +
-                `  CONFIG_EXAMPLE: "y"\n`,
+                `  `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-kconfig-object',
             detail: detail,
@@ -68,7 +68,7 @@ export function kconfigCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `kconfig:\n` +
-                `  - CONFIG_EXAMPLE=y\n`,
+                `  - `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-kconfig-array',
             detail: detail,

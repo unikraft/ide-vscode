@@ -42,7 +42,7 @@ export function volumesCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `volumes:\n` +
-                `  - ./src:/dest\n`,
+                `  - ./src:/dest`,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-volumes-short',
             detail: detail,
@@ -58,8 +58,8 @@ export function volumesCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `volumes:\n` +
-                `  - source: ./src\n` +
-                `    destination: /dest\n`,
+                `  - source: \n` +
+                `    destination: `,
             kind: CompletionItemKind.Keyword,
             data: 'kraftfile-volumes-long',
             detail: detail,
@@ -75,8 +75,8 @@ export function volumesCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `volumes:\n` +
-                `  - source: ./src\n` +
-                `    destination: /dest\n` +
+                `  - source: \n` +
+                `    destination: \n` +
                 `    driver: 9pfs\n` +
                 `    readOnly: false\n`,
             kind: CompletionItemKind.Keyword,

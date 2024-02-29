@@ -439,7 +439,8 @@
   },
   "extensionPack": [
     "ms-vscode.cpptools",
-    "ms-python.python"
+    "ms-python.python",
+    "redhat.vscode-yaml"
   ],
   "scripts": {
     "test": "node ./client/out/test/runTest.js",
