@@ -12,20 +12,39 @@ import { KraftYamlType } from '../types';
 import { unikraftLanguageServer } from '../../utils';
 
 export function validateSpecification(document: TextDocument, kraftfile: KraftYamlType): Diagnostic[] {
-    const diagnostics: Diagnostic[] = [];
-    const docTextLen = document.getText().trim().length;
+    if (!kraftfile) {
+        return [];
+    }
 
-    if (!kraftfile || (!kraftfile.specification && !kraftfile.spec)) {
+    const diagnostics: Diagnostic[] = [];
+    const docText = document.getText();
+    const warnMsg = `Warning: Empty value.`;
+
+    if (kraftfile.specification === null || (typeof kraftfile.specification == "string" && kraftfile.specification.length === 0)) {
+        const alertPos = docText.indexOf("specification");
         diagnostics.push({
-            severity: DiagnosticSeverity.Error,
+            severity: DiagnosticSeverity.Warning,
             range: {
-                start: document.positionAt(docTextLen + 1),
-                end: document.positionAt(docTextLen + 2)
+                start: document.positionAt(alertPos),
+                end: document.positionAt(alertPos + 13)
             },
-            message: `Error: No 'specification' attribute is specified.`,
+            message: warnMsg,
             source: unikraftLanguageServer
         });
     }
 
-    return diagnostics
+    if (kraftfile.spec === null || (typeof kraftfile.spec == "string" && kraftfile.spec.length === 0)) {
+        const alertPos = docText.indexOf("spec");
+        diagnostics.push({
+            severity: DiagnosticSeverity.Warning,
+            range: {
+                start: document.positionAt(alertPos),
+                end: document.positionAt(alertPos + 4)
+            },
+            message: warnMsg,
+            source: unikraftLanguageServer
+        });
+    }
+
+    return diagnostics;
 }

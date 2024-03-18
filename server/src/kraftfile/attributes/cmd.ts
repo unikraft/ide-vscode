@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr } from '../utils';
+import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "cmd";
@@ -37,14 +37,15 @@ export function cmdCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `cmd: ""`,
+            insertText: `cmd: `,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-cmd-string',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docString + codeBlockStr
-            }
+            },
+            preselect: true,
+            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -54,12 +55,12 @@ export function cmdCompletionItem(): CompletionItem[] {
             },
             insertText: `cmd: [""]`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-cmd-inline',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docInLineArray + codeBlockStr
-            }
+            },
+            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -70,12 +71,12 @@ export function cmdCompletionItem(): CompletionItem[] {
             insertText: `cmd:\n` +
                 `  - `,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-cmd-multiline',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docMultiLineArray + codeBlockStr
-            }
+            },
+            command: reTriggerCompletionCMD
         }
     ]
 }

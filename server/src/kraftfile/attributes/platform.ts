@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr } from '../utils';
+import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
 import { unikraft } from "../../utils";
 
 const shortLabel: string = "plat";
@@ -37,12 +37,12 @@ export function platformCompletionItem(): CompletionItem[] {
             },
             insertText: `plat: `,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-target-plat',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docShortLabel + codeBlockStr
-            }
+            },
+            command: reTriggerCompletionCMD
         },
         {
             label: longLabel,
@@ -52,12 +52,13 @@ export function platformCompletionItem(): CompletionItem[] {
             },
             insertText: `platform: `,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-target-platform',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docLongLabel + codeBlockStr
-            }
+            },
+            preselect: true,
+            command:reTriggerCompletionCMD
         }
     ]
 }

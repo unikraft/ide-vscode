@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr } from '../utils';
+import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "volumes";
@@ -44,7 +44,6 @@ export function volumesCompletionItem(): CompletionItem[] {
             insertText: `volumes:\n` +
                 `  - ./src:/dest`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-volumes-short',
             detail: detail,
             documentation: {
                 kind: "markdown",
@@ -61,12 +60,13 @@ export function volumesCompletionItem(): CompletionItem[] {
                 `  - source: \n` +
                 `    destination: `,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-volumes-long',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docLongHand + codeBlockStr
-            }
+            },
+            preselect: true,
+            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -80,7 +80,6 @@ export function volumesCompletionItem(): CompletionItem[] {
                 `    driver: 9pfs\n` +
                 `    readOnly: false\n`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-volumes-all-attributes',
             detail: detail,
             documentation: {
                 kind: "markdown",

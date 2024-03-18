@@ -12,19 +12,66 @@ import { KraftYamlType } from '../types';
 import { unikraftLanguageServer } from '../../utils';
 
 export function validateUnikraft(document: TextDocument, kraftfile: KraftYamlType): Diagnostic[] {
-    const diagnostics: Diagnostic[] = [];
-    const docTextLen = document.getText().trim().length;
+    if (!kraftfile) {
+        return []
+    }
 
-    if (!kraftfile || !kraftfile.unikraft) {
-        diagnostics.push({
-            severity: DiagnosticSeverity.Error,
-            range: {
-                start: document.positionAt(docTextLen + 1),
-                end: document.positionAt(docTextLen + 2)
-            },
-            message: `Error: No 'unikraft' attribute is specified.`,
-            source: unikraftLanguageServer
-        });
+    const diagnostics: Diagnostic[] = [];
+    const docText: string = document.getText();
+    const warnMsg: string = `Warning: Empty value.`
+
+    if (typeof kraftfile.unikraft == "object") {
+        if (kraftfile.unikraft === null) {
+            const alertPos = docText.indexOf("unikraft");
+            diagnostics.push({
+                severity: DiagnosticSeverity.Warning,
+                range: {
+                    start: document.positionAt(alertPos),
+                    end: document.positionAt(alertPos + 8)
+                },
+                message: warnMsg,
+                source: unikraftLanguageServer
+            });
+        } else {
+            if (kraftfile.unikraft.kconfig === null) {
+                const alertPos = docText.indexOf("kconfig", docText.indexOf("unikraft"));
+                diagnostics.push({
+                    severity: DiagnosticSeverity.Warning,
+                    range: {
+                        start: document.positionAt(alertPos),
+                        end: document.positionAt(alertPos + 7)
+                    },
+                    message: warnMsg,
+                    source: unikraftLanguageServer
+                });
+            }
+
+            if (kraftfile.unikraft.source === null) {
+                const alertPos = docText.indexOf("source", docText.indexOf("unikraft"));
+                diagnostics.push({
+                    severity: DiagnosticSeverity.Warning,
+                    range: {
+                        start: document.positionAt(alertPos),
+                        end: document.positionAt(alertPos + 6)
+                    },
+                    message: warnMsg,
+                    source: unikraftLanguageServer
+                });
+            }
+
+            if (kraftfile.unikraft.version === null) {
+                const alertPos = docText.indexOf("version", docText.indexOf("unikraft"));
+                diagnostics.push({
+                    severity: DiagnosticSeverity.Warning,
+                    range: {
+                        start: document.positionAt(alertPos),
+                        end: document.positionAt(alertPos + 7)
+                    },
+                    message: warnMsg,
+                    source: unikraftLanguageServer
+                });
+            }
+        }
     }
 
     return diagnostics

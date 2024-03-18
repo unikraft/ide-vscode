@@ -7,7 +7,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr } from '../utils';
+import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
 import { unikraft } from "../../utils";
 
 const shortLabel: string = "spec";
@@ -37,7 +37,6 @@ export function specificationCompletionItem(): CompletionItem[] {
             },
             insertText: `spec: "v0.6"\n`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-spec',
             detail: detail,
             documentation: markupDoc
         },
@@ -49,9 +48,10 @@ export function specificationCompletionItem(): CompletionItem[] {
             },
             insertText: `specification: "v0.6"\n`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-specification',
             detail: detail,
-            documentation: markupDoc
+            documentation: markupDoc,
+            preselect: true,
+            command: reTriggerCompletionCMD
         }
     ]
 }

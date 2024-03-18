@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr } from '../utils';
+import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
 import { unikraft } from "../../utils";
 
 const shortLabel: string = "arch";
@@ -37,12 +37,12 @@ export function architectureCompletionItem(): CompletionItem[] {
             },
             insertText: `arch: `,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-target-arch',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docShortLabel + codeBlockStr
-            }
+            },
+            command: reTriggerCompletionCMD
         },
         {
             label: longLabel,
@@ -52,12 +52,13 @@ export function architectureCompletionItem(): CompletionItem[] {
             },
             insertText: `architecture: `,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-target-architecture',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docLongLabel + codeBlockStr
-            }
+            },
+            preselect: true,
+            command: reTriggerCompletionCMD
         }
     ]
 }

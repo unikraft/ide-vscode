@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr } from '../utils';
+import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "source";
@@ -41,12 +41,12 @@ export function sourceCompletionItem(): CompletionItem[] {
             },
             insertText: `source: `,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-source',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: documentation
-            }
+            },
+            command: reTriggerCompletionCMD
         }
     ]
 }

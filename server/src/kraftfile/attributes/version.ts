@@ -7,7 +7,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr } from '../utils';
+import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "version";
@@ -46,9 +46,9 @@ export function versionCompletionItem(): CompletionItem[] {
             },
             insertText: `version: `,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-version',
             detail: detail,
-            documentation: markupDoc
+            documentation: markupDoc,
+            command: reTriggerCompletionCMD
         }
     ]
 }
