@@ -161,7 +161,7 @@ connection.onCompletion(
 	(params: TextDocumentPositionParams): CompletionItem[] => {
 		switch (true) {
 			case isKraftfile(params.textDocument.uri):
-				return kraftfileCompletionItems();
+				return kraftfileCompletionItems(currentUriText, workspaceDir, params);
 
 			case enabledCCompletion && isCFile(params.textDocument.uri):
 				if (!hasUnikraftDir) {

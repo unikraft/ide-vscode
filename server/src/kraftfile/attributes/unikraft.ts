@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, minimalKraftfile } from '../utils';
+import { codeBlockStr, minimalKraftfile, reTriggerCompletionCMD } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "unikraft";
@@ -47,7 +47,6 @@ export function unikraftCompletionItem(): CompletionItem[] {
             },
             insertText: `unikraft: stable\n`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-unikraft-version-string',
             detail: detail,
             documentation: {
                 kind: "markdown",
@@ -62,7 +61,6 @@ export function unikraftCompletionItem(): CompletionItem[] {
             },
             insertText: `unikraft: https://github.com/unikraft/unikraft.git\n`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-unikraft-url-string',
             detail: detail,
             documentation: {
                 kind: "markdown",
@@ -78,12 +76,12 @@ export function unikraftCompletionItem(): CompletionItem[] {
             insertText: `unikraft:\n` +
                 `  version: stable\n`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-unikraft-version-attribute-object',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docLongHand + codeBlockStr
-            }
+            },
+            preselect: true
         },
         {
             label: label,
@@ -97,7 +95,6 @@ export function unikraftCompletionItem(): CompletionItem[] {
                 `  kconfig:\n` +
                 `    CONFIG_EXAMPLE: "y"\n`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-unikraft-all-attributes-object',
             detail: detail,
             documentation: {
                 kind: "markdown",
@@ -112,7 +109,6 @@ export function unikraftCompletionItem(): CompletionItem[] {
             },
             insertText: minimalKraftfile,
             kind: CompletionItemKind.Snippet,
-            data: 'kraftfile-file',
             detail: `Kraftfile basic attributes.`,
             documentation: {
                 kind: "markdown",

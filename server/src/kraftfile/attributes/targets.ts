@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr } from '../utils';
+import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "targets";
@@ -49,12 +49,12 @@ export function targetsCompletionItem(): CompletionItem[] {
             insertText: `targets:\n` +
                 `  - `,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-targets-short',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docShortHand + codeBlockStr
-            }
+            },
+            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -66,12 +66,13 @@ export function targetsCompletionItem(): CompletionItem[] {
                 `  - platform: \n` +
                 `    architecture: \n`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-targets-long',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docLongHand + codeBlockStr
-            }
+            },
+            preselect: true,
+            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -86,12 +87,12 @@ export function targetsCompletionItem(): CompletionItem[] {
                 `    kconfig:\n` +
                 `      CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS: "y"\n`,
             kind: CompletionItemKind.Keyword,
-            data: 'kraftfile-targets-all-attributes',
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docAllAtributes + codeBlockStr
-            }
+            },
+            command: reTriggerCompletionCMD
         }
     ]
 }
