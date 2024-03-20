@@ -202,7 +202,7 @@ Currently, LSP provide following features:
 
   * Auto-Completion for Kraftfile attributes.
   * Hover feature for Kraftfile attributes.
-  * Validates if Kraftfile contains all the required attributes.
+  * Vadidates against null value of any attribute in Kraftfile.
   * Auto-Completion for headerfile paths when importing in C/C++ files (Displays a list of available `*.h` files in `$PWD/.unikraft`).
   * Validates if null or repeated imports are there in `C/C++` files.
 
@@ -241,11 +241,7 @@ LSP provide Hover feature only for all the attributes of `Kraftfile`.
 
 ### Validation
 
-LSP provide validation feature only for the required attributes of `Kraftfile` and only for importing in `C/C++` files.
-
-#### Kraftfile Validation
-
-![Kraftfile validation](https://github.com/unikraft/ide-vscode/blob/main/media/kraftfile-validation.gif)
+LSP provide validation feature against null value of any attribute in `Kraftfile`.
 
 #### `C/C++` file imports Validation
 
