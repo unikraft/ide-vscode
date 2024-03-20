@@ -90,10 +90,10 @@ export function unikraftCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `unikraft:\n` +
-                `  source: https://github.com/unikraft/unikraft.git` +
+                `  source: https://github.com/unikraft/unikraft.git\n` +
                 `  version: stable\n` +
                 `  kconfig:\n` +
-                `    CONFIG_EXAMPLE: "y"\n`,
+                `    `,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
