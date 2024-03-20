@@ -437,7 +437,7 @@
       }
     ]
   },
-  "extensionPack": [
+  "extensionDependencies": [
     "ms-vscode.cpptools",
     "ms-python.python",
     "redhat.vscode-yaml"
