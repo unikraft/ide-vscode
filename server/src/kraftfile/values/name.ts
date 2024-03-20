@@ -29,5 +29,5 @@ export function nameValueCompletionItem(lineStr: string, workspaceDir: string): 
                 value: codeBlockStr + "name: " + projectName + "\n" + codeBlockStr
             }
         }
-    ]
+    ];
 }

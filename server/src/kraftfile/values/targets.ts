@@ -139,6 +139,42 @@ export function architectureValueCompletionItem(lineStr: string): CompletionItem
 
     return [
         {
+            label: "x86_64",
+            labelDetails: {
+                detail: " string",
+                description: unikraft
+            },
+            insertText: "x86_64",
+            kind: CompletionItemKind.Value,
+            documentation: {
+                kind: "markdown",
+                value: codeBlockStr + "plat: " + "x86_64" + "\n" + codeBlockStr
+            }
+        },
+        {
+            label: "arm64",
+            labelDetails: {
+                detail: " string",
+                description: unikraft
+            },
+            insertText: "arm64",
+            kind: CompletionItemKind.Value,
+            documentation: {
+                kind: "markdown",
+                value: codeBlockStr + "plat: " + "arm64" + "\n" + codeBlockStr
+            }
+        }
+    ];
+}
+
+export function platformValueCompletionItem(lineStr: string): CompletionItem[] {
+    const attr: string | undefined = getInLineAttribute(lineStr);
+    if (!attr || attr != "plat" && attr != "platform") {
+        return [];
+    }
+
+    return [
+        {
             label: "qemu",
             labelDetails: {
                 detail: " string",
@@ -177,41 +213,5 @@ export function architectureValueCompletionItem(lineStr: string): CompletionItem
                 value: codeBlockStr + "arch: " + "firecracker" + "\n" + codeBlockStr
             }
         },
-    ];
-}
-
-export function platformValueCompletionItem(lineStr: string): CompletionItem[] {
-    const attr: string | undefined = getInLineAttribute(lineStr);
-    if (!attr || attr != "plat" && attr != "platform") {
-        return [];
-    }
-
-    return [
-        {
-            label: "x86_64",
-            labelDetails: {
-                detail: " string",
-                description: unikraft
-            },
-            insertText: "x86_64",
-            kind: CompletionItemKind.Value,
-            documentation: {
-                kind: "markdown",
-                value: codeBlockStr + "plat: " + "x86_64" + "\n" + codeBlockStr
-            }
-        },
-        {
-            label: "arm64",
-            labelDetails: {
-                detail: " string",
-                description: unikraft
-            },
-            insertText: "arm64",
-            kind: CompletionItemKind.Value,
-            documentation: {
-                kind: "markdown",
-                value: codeBlockStr + "plat: " + "arm64" + "\n" + codeBlockStr
-            }
-        }
     ];
 }
