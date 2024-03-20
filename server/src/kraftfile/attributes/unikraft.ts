@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, minimalKraftfile, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr, minimalKraftfile } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "unikraft";

@@ -54,11 +54,6 @@
           }
         },
         "unikraft": {
-          "enableCCompletion": {
-            "type": "boolean",
-            "default": false,
-            "description": "Enables Server to show auto-completion elements for headerfiles in `.c/.h` extension files, By default it checks host machine if `C/C++ Extension` provided by microsoft is installed and sets itself."
-          },
           "client": {
             "sources": {
               "type": "string",

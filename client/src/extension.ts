@@ -44,8 +44,6 @@ export async function activate(context: ExtensionContext) {
 			// { scheme: 'file', language: 'plaintext' },
 			{ pattern: '*.y(a)ml' },
 			{ scheme: 'file', language: 'yaml' },
-			{ scheme: 'file', language: 'cpp' },
-			{ scheme: 'file', language: 'c' }
 		],
 		synchronize: {
 			// Notify the server about file changes to '.clientrc' files contained in the workspace.

@@ -16,7 +16,7 @@ export function validateName(document: TextDocument, kraftfile: KraftYamlType): 
         return [];
     }
 
-    let diagnostics: Diagnostic[] = [];
+    const diagnostics: Diagnostic[] = [];
     const docText = document.getText();
     const alertPos = docText.indexOf("name");
     const emptyWarning = {

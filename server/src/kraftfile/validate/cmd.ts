@@ -16,7 +16,7 @@ export function validateCmd(document: TextDocument, kraftfile: KraftYamlType): D
         return []
     }
 
-    let diagnostics: Diagnostic[] = [];
+    const diagnostics: Diagnostic[] = [];
     const docText = document.getText();
     const alertPos = docText.indexOf("cmd");
     const emptyWarning = {

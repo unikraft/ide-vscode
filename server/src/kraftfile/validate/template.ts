@@ -16,9 +16,9 @@ export function validateTemplate(document: TextDocument, kraftfile: KraftYamlTyp
         return [];
     }
 
-    let diagnostics: Diagnostic[] = [];
+    const diagnostics: Diagnostic[] = [];
     const docText = document.getText();
-    let tempAlertPos = docText.indexOf("template");
+    const tempAlertPos = docText.indexOf("template");
     const warnMsg = `Warning: Empty value.`
     const emptyWarning = {
         severity: DiagnosticSeverity.Warning,

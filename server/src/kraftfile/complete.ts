@@ -26,12 +26,10 @@ import { platformValueCompletionItem } from './values/targets';
 import { getCurrentWordFromYamlFile } from '../utils';
 import { targetsValueCompletionItem } from './values/targets';
 
-const yaml = require("yaml");
-
 export function kraftfileCompletionItems(currentUriText: string, workspaceDir: string, params: TextDocumentPositionParams): CompletionItem[] {
     let items: CompletionItem[] = [];
     const lines = currentUriText.split('\n');
-    let lineStr = lines[params.position.line];
+    const lineStr = lines[params.position.line];
     let isValue: boolean = false;
     let isNested: boolean = false;
     let paretnAttribute: string = "";

@@ -16,7 +16,7 @@ export function validateLibraries(document: TextDocument, kraftfile: KraftYamlTy
         return [];
     }
 
-    let diagnostics: Diagnostic[] = [];
+    const diagnostics: Diagnostic[] = [];
     const docText = document.getText();
     const emptyWarning: string = `Warning: Empty value.`;
 

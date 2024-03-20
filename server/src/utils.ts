@@ -3,7 +3,6 @@
 import { Diagnostic } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { validateKraftfile } from './kraftfile/validate'
-import { validateC } from './c/validate';
 
 export const unikraft = "Unikraft";
 export const unikraftLanguageServer = "Unikraft Language Server";
@@ -25,8 +24,6 @@ export function validateFile(document: TextDocument): Diagnostic[] | undefined {
     switch (true) {
         case getDefaultKraftfileNames().includes(docUri.slice(docUri.lastIndexOf("/") + 1)):
             return validateKraftfile(document);
-        case isCFile(docUri):
-            return validateC(document);
         default:
             break;
     }

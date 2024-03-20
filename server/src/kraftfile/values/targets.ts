@@ -132,7 +132,7 @@ export function targetsValueCompletionItem(paretnAttribute: string): CompletionI
 }
 
 export function architectureValueCompletionItem(lineStr: string): CompletionItem[] {
-    let attr: string | undefined = getInLineAttribute(lineStr);
+    const attr: string | undefined = getInLineAttribute(lineStr);
     if (!attr || attr != "arch" && attr != "architecture") {
         return [];
     }
@@ -181,7 +181,7 @@ export function architectureValueCompletionItem(lineStr: string): CompletionItem
 }
 
 export function platformValueCompletionItem(lineStr: string): CompletionItem[] {
-    let attr: string | undefined = getInLineAttribute(lineStr);
+    const attr: string | undefined = getInLineAttribute(lineStr);
     if (!attr || attr != "plat" && attr != "platform") {
         return [];
     }
