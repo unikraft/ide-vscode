@@ -18,7 +18,6 @@ import { env } from 'process';
 import { basename } from 'path';
 import { existsSync, readFileSync, rmSync } from 'fs';
 import { sync as commandExistsSync } from 'command-exists';
-import { enableCCompletion } from './config'
 
 export class UnikraftExtension {
     constructor(private context: vscode.ExtensionContext) { }
@@ -122,9 +121,6 @@ export class UnikraftExtension {
 
         await reloadIncludes(projectPath);
         await reloadConfig(projectPath);
-
-        // Checking if `C/C++` Extension is installed on the system.
-        await enableCCompletion();
     }
 
     private initExtension() {

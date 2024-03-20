@@ -16,7 +16,7 @@ export function validateVolumes(document: TextDocument, kraftfile: KraftYamlType
         return [];
     }
 
-    let diagnostics: Diagnostic[] = [];
+    const diagnostics: Diagnostic[] = [];
     const docText = document.getText();
     const volumesAlertPos = docText.indexOf("volumes");
     const warnMsg = `Warning: Empty value.`;

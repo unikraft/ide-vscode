@@ -206,11 +206,6 @@ Currently, LSP provide following features:
   * Auto-Completion for headerfile paths when importing in C/C++ files (Displays a list of available `*.h` files in `$PWD/.unikraft`).
   * Validates if null or repeated imports are there in `C/C++` files.
 
-### Note:
-
-  * To enable `C/C++` auto-completion or validation feature provided by LSP enable `unikraft.enableCCompletion` attribute in `$PWD/.vscode/settings.json` file. By default this attribute is set by extension itself based on the installation of [`C/C++ Extension` provided by microsoft](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) on the host machine.
-  * LSP server read `C_Cpp.default.includePath` attribute from `$PWD/.vscode/settings.json` file set by client to show a list of headerfiles to user present in `$PWD/.unikraft` dir to include when user imports headerfile in any `C/C++` file.
-
 ### Auto-Completion
 
 LSP provide auto-completion feature for all the attributes of `Kraftfile` and only for importing in `C/C++` files.
@@ -242,10 +237,6 @@ LSP provide Hover feature only for all the attributes of `Kraftfile`.
 ### Validation
 
 LSP provide validation feature against null value of any attribute in `Kraftfile`.
-
-#### `C/C++` file imports Validation
-
-![C/C++ validation](https://github.com/unikraft/ide-vscode/blob/main/media/c-validation.gif)
 
 ## Known Issues
 

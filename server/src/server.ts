@@ -25,7 +25,6 @@ import {
 
 import { kraftfileCompletionItems } from './kraftfile/complete';
 import { readdirSync } from 'fs';
-import { cCompletionItems } from './c/complete';
 import { getKraftfileHoverItem } from './kraftfile/hover';
 import { UnikraftServerConfigType, UnikraftConfigType } from './types';
 
@@ -45,8 +44,6 @@ let hasUnikraftDir: boolean = false;
 let workspaceDir: string = '';
 let currentUriText: string = '';
 let workspaceUnikraftConfig: UnikraftConfigType = {} as UnikraftConfigType;
-let enabledCCompletion: boolean = false;
-const includePath: string[] = [];
 
 connection.onInitialize((params: InitializeParams) => {
 	const capabilities = params.capabilities;
@@ -162,13 +159,6 @@ connection.onCompletion(
 		switch (true) {
 			case isKraftfile(params.textDocument.uri):
 				return kraftfileCompletionItems(currentUriText, workspaceDir, params);
-
-			case enabledCCompletion && isCFile(params.textDocument.uri):
-				if (!hasUnikraftDir) {
-					return [];
-				}
-
-				return cCompletionItems(currentUriText, params, workspaceDir, includePath);
 		}
 		return [];
 	}
@@ -264,25 +254,5 @@ async function initGlobalVars() {
 
 	if (workspaceSettings && workspaceSettings["unikraft"]) {
 		workspaceUnikraftConfig = workspaceSettings["unikraft"]
-	}
-
-	// Checking the value of `enableCCompletion` in workspace configuration.
-	if (workspaceUnikraftConfig && workspaceUnikraftConfig["enableCCompletion"]) {
-		enabledCCompletion = true;
-		if (
-			workspaceSettings["C_Cpp"] &&
-			workspaceSettings["C_Cpp"]["default"] &&
-			workspaceSettings["C_Cpp"]["default"]["includePath"]
-		) {
-			const tmpPaths: string[] = workspaceSettings["C_Cpp"]["default"]["includePath"];
-			tmpPaths.forEach((path, index) => {
-				if (path.endsWith("**")) {
-					path = path.slice(0, path.lastIndexOf("**"));
-				}
-				includePath[index] = path;
-			})
-		}
-	} else {
-		enabledCCompletion = false;
 	}
 }

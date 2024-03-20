@@ -8,7 +8,7 @@ import { unikraft } from '../../utils'
 import { codeBlockStr, getInLineAttribute } from '../utils';
 
 export function nameValueCompletionItem(lineStr: string, workspaceDir: string): CompletionItem[] {
-    let attr: string | undefined = getInLineAttribute(lineStr);
+    const attr: string | undefined = getInLineAttribute(lineStr);
     if (!attr || attr != "name") {
         return [];
     }
