@@ -64,7 +64,7 @@ export function targetsCompletionItem(): CompletionItem[] {
             },
             insertText: `targets:\n` +
                 `  - platform: \n` +
-                `    architecture: \n`,
+                `    architecture: `,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -85,7 +85,7 @@ export function targetsCompletionItem(): CompletionItem[] {
                 `    platform: \n` +
                 `    architecture: \n` +
                 `    kconfig:\n` +
-                `      CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS: "y"\n`,
+                `      `,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {

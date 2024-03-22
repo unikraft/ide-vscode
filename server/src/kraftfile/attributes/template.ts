@@ -39,7 +39,7 @@ export function templateCompletionItem(): CompletionItem[] {
                 detail: " short-hand, string",
                 description: unikraft
             },
-            insertText: `template: \n`,
+            insertText: `template: `,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -57,7 +57,7 @@ export function templateCompletionItem(): CompletionItem[] {
             },
             insertText: `template:\n` +
                 `  name: \n` +
-                `  version: \n`,
+                `  version: `,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
