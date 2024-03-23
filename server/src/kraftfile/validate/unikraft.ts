@@ -18,30 +18,30 @@ export function validateUnikraft(document: TextDocument, kraftfile: KraftYamlTyp
 
     const diagnostics: Diagnostic[] = [];
     const docText: string = document.getText();
-    const warnMsg: string = `Warning: Empty value.`
+    const errMsg: string = `Error: Empty value.`
 
     if (typeof kraftfile.unikraft == "object") {
         if (kraftfile.unikraft === null) {
             const alertPos = docText.indexOf("unikraft");
             diagnostics.push({
-                severity: DiagnosticSeverity.Warning,
+                severity: DiagnosticSeverity.Error,
                 range: {
                     start: document.positionAt(alertPos),
                     end: document.positionAt(alertPos + 8)
                 },
-                message: warnMsg,
+                message: errMsg,
                 source: unikraftLanguageServer
             });
         } else {
             if (kraftfile.unikraft.kconfig === null) {
                 const alertPos = docText.indexOf("kconfig", docText.indexOf("unikraft"));
                 diagnostics.push({
-                    severity: DiagnosticSeverity.Warning,
+                    severity: DiagnosticSeverity.Error,
                     range: {
                         start: document.positionAt(alertPos),
                         end: document.positionAt(alertPos + 7)
                     },
-                    message: warnMsg,
+                    message: errMsg,
                     source: unikraftLanguageServer
                 });
             }
@@ -49,12 +49,12 @@ export function validateUnikraft(document: TextDocument, kraftfile: KraftYamlTyp
             if (kraftfile.unikraft.source === null) {
                 const alertPos = docText.indexOf("source", docText.indexOf("unikraft"));
                 diagnostics.push({
-                    severity: DiagnosticSeverity.Warning,
+                    severity: DiagnosticSeverity.Error,
                     range: {
                         start: document.positionAt(alertPos),
                         end: document.positionAt(alertPos + 6)
                     },
-                    message: warnMsg,
+                    message: errMsg,
                     source: unikraftLanguageServer
                 });
             }
@@ -62,12 +62,12 @@ export function validateUnikraft(document: TextDocument, kraftfile: KraftYamlTyp
             if (kraftfile.unikraft.version === null) {
                 const alertPos = docText.indexOf("version", docText.indexOf("unikraft"));
                 diagnostics.push({
-                    severity: DiagnosticSeverity.Warning,
+                    severity: DiagnosticSeverity.Error,
                     range: {
                         start: document.positionAt(alertPos),
                         end: document.positionAt(alertPos + 7)
                     },
-                    message: warnMsg,
+                    message: errMsg,
                     source: unikraftLanguageServer
                 });
             }

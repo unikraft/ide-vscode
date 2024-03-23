@@ -3,10 +3,11 @@
 import {
     CompletionItemKind,
     CompletionItem,
+    InsertTextFormat,
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "volumes";
@@ -42,7 +43,8 @@ export function volumesCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `volumes:\n` +
-                `  - ./src:/dest`,
+                '  - ./${1:src}:/${2:dest}',
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -57,8 +59,9 @@ export function volumesCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `volumes:\n` +
-                `  - source: \n` +
-                `    destination: `,
+                `  - source: $1\n` +
+                `    destination: $2`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -66,7 +69,6 @@ export function volumesCompletionItem(): CompletionItem[] {
                 value: codeBlockStr + docLongHand + codeBlockStr
             },
             preselect: true,
-            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -75,10 +77,11 @@ export function volumesCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `volumes:\n` +
-                `  - source: \n` +
-                `    destination: \n` +
-                `    driver: 9pfs\n` +
-                `    readOnly: false\n`,
+                `  - source: $1\n` +
+                `    destination: $2\n` +
+                '    driver: ${3:9pfs}\n' +
+                '    readOnly: ${4|false,true|}\n',
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {

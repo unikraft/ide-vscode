@@ -3,10 +3,11 @@
 import {
     CompletionItemKind,
     CompletionItem,
+    InsertTextFormat,
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr, getArchs } from '../utils';
 import { unikraft } from "../../utils";
 
 const shortLabel: string = "arch";
@@ -28,6 +29,9 @@ const fullDoc: string = `Each target consists of at minimum an architecture and 
     `For more visit: https://unikraft.org/docs/cli/reference/kraftfile/v0.6#top-level-targets-attributes`
 
 export function architectureCompletionItem(): CompletionItem[] {
+    const archs = getArchs();
+    const arch = `arch: ${"${1|" + archs + "|}"}`;
+    const architecture = `architecture: ${"${1|" + archs + "|}"}`;
     return [
         {
             label: shortLabel,
@@ -35,14 +39,14 @@ export function architectureCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `arch: `,
+            insertText: arch,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docShortLabel + codeBlockStr
             },
-            command: reTriggerCompletionCMD
         },
         {
             label: longLabel,
@@ -50,7 +54,8 @@ export function architectureCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `architecture: `,
+            insertText: architecture,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -58,7 +63,6 @@ export function architectureCompletionItem(): CompletionItem[] {
                 value: codeBlockStr + docLongLabel + codeBlockStr
             },
             preselect: true,
-            command: reTriggerCompletionCMD
         }
     ]
 }

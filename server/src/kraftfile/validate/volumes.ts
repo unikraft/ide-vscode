@@ -19,17 +19,17 @@ export function validateVolumes(document: TextDocument, kraftfile: KraftYamlType
     const diagnostics: Diagnostic[] = [];
     const docText = document.getText();
     const volumesAlertPos = docText.indexOf("volumes");
-    const warnMsg = `Warning: Empty value.`;
+    const errMsg = `Error: Empty value.`;
 
     if (typeof kraftfile.volumes == "object") {
         if (kraftfile.volumes === null) {
             diagnostics.push({
-                severity: DiagnosticSeverity.Warning,
+                severity: DiagnosticSeverity.Error,
                 range: {
                     start: document.positionAt(volumesAlertPos),
                     end: document.positionAt(volumesAlertPos + 7)
                 },
-                message: warnMsg,
+                message: errMsg,
                 source: unikraftLanguageServer
             })
         } else {
@@ -51,24 +51,24 @@ export function validateVolumes(document: TextDocument, kraftfile: KraftYamlType
                 } else if (typeof volume == "object") {
                     if (volume === null) {
                         diagnostics.push({
-                            severity: DiagnosticSeverity.Warning,
+                            severity: DiagnosticSeverity.Error,
                             range: {
                                 start: document.positionAt(currentElementPos),
                                 end: document.positionAt(currentElementPos + 2)
                             },
-                            message: warnMsg,
+                            message: errMsg,
                             source: unikraftLanguageServer
                         });
                     } else {
                         if (volume.destination === null) {
                             const alertPos = docText.indexOf("destination", currentElementPos);
                             diagnostics.push({
-                                severity: DiagnosticSeverity.Warning,
+                                severity: DiagnosticSeverity.Error,
                                 range: {
                                     start: document.positionAt(alertPos),
                                     end: document.positionAt(alertPos + 11)
                                 },
-                                message: warnMsg,
+                                message: errMsg,
                                 source: unikraftLanguageServer
                             });
                         }
@@ -76,12 +76,12 @@ export function validateVolumes(document: TextDocument, kraftfile: KraftYamlType
                         if (volume.driver === null) {
                             const alertPos = docText.indexOf("driver", currentElementPos);
                             diagnostics.push({
-                                severity: DiagnosticSeverity.Warning,
+                                severity: DiagnosticSeverity.Error,
                                 range: {
                                     start: document.positionAt(alertPos),
                                     end: document.positionAt(alertPos + 6)
                                 },
-                                message: warnMsg,
+                                message: errMsg,
                                 source: unikraftLanguageServer
                             });
                         }
@@ -89,12 +89,12 @@ export function validateVolumes(document: TextDocument, kraftfile: KraftYamlType
                         if (volume.source === null) {
                             const alertPos = docText.indexOf("source", currentElementPos);
                             diagnostics.push({
-                                severity: DiagnosticSeverity.Warning,
+                                severity: DiagnosticSeverity.Error,
                                 range: {
                                     start: document.positionAt(alertPos),
                                     end: document.positionAt(alertPos + 6)
                                 },
-                                message: warnMsg,
+                                message: errMsg,
                                 source: unikraftLanguageServer
                             });
                         }
@@ -102,12 +102,12 @@ export function validateVolumes(document: TextDocument, kraftfile: KraftYamlType
                         if (volume.readOnly === null) {
                             const alertPos = docText.indexOf("readOnly", currentElementPos);
                             diagnostics.push({
-                                severity: DiagnosticSeverity.Warning,
+                                severity: DiagnosticSeverity.Error,
                                 range: {
                                     start: document.positionAt(alertPos),
                                     end: document.positionAt(alertPos + 8)
                                 },
-                                message: warnMsg,
+                                message: errMsg,
                                 source: unikraftLanguageServer
                             });
                         }

@@ -3,10 +3,11 @@
 import {
     CompletionItemKind,
     CompletionItem,
+    InsertTextFormat,
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "cmd";
@@ -37,7 +38,8 @@ export function cmdCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `cmd: `,
+            insertText: 'cmd: "$1"',
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -45,7 +47,6 @@ export function cmdCompletionItem(): CompletionItem[] {
                 value: codeBlockStr + docString + codeBlockStr
             },
             preselect: true,
-            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -53,14 +54,14 @@ export function cmdCompletionItem(): CompletionItem[] {
                 detail: " in-line array",
                 description: unikraft
             },
-            insertText: `cmd: [""]`,
+            insertText: 'cmd: ["$1"]',
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docInLineArray + codeBlockStr
             },
-            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -76,7 +77,6 @@ export function cmdCompletionItem(): CompletionItem[] {
                 kind: "markdown",
                 value: codeBlockStr + docMultiLineArray + codeBlockStr
             },
-            command: reTriggerCompletionCMD
         }
     ]
 }

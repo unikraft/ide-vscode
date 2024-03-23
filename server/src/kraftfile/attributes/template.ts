@@ -3,10 +3,11 @@
 import {
     CompletionItemKind,
     CompletionItem,
+    InsertTextFormat,
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "template";
@@ -47,7 +48,6 @@ export function templateCompletionItem(): CompletionItem[] {
                 value: codeBlockStr + docShortHand + codeBlockStr
             },
             preselect: true,
-            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -56,15 +56,15 @@ export function templateCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `template:\n` +
-                `  name: \n` +
-                `  version: `,
+                `  name: $1\n` +
+                `  version: $2`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docLongHand + codeBlockStr
             },
-            command: reTriggerCompletionCMD
         }
     ]
 }

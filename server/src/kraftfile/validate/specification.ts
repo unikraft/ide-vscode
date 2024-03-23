@@ -18,17 +18,17 @@ export function validateSpecification(document: TextDocument, kraftfile: KraftYa
 
     const diagnostics: Diagnostic[] = [];
     const docText = document.getText();
-    const warnMsg = `Warning: Empty value.`;
+    const errMsg = `Error: Empty value.`;
 
     if (kraftfile.specification === null || (typeof kraftfile.specification == "string" && kraftfile.specification.length === 0)) {
         const alertPos = docText.indexOf("specification");
         diagnostics.push({
-            severity: DiagnosticSeverity.Warning,
+            severity: DiagnosticSeverity.Error,
             range: {
                 start: document.positionAt(alertPos),
                 end: document.positionAt(alertPos + 13)
             },
-            message: warnMsg,
+            message: errMsg,
             source: unikraftLanguageServer
         });
     }
@@ -36,12 +36,12 @@ export function validateSpecification(document: TextDocument, kraftfile: KraftYa
     if (kraftfile.spec === null || (typeof kraftfile.spec == "string" && kraftfile.spec.length === 0)) {
         const alertPos = docText.indexOf("spec");
         diagnostics.push({
-            severity: DiagnosticSeverity.Warning,
+            severity: DiagnosticSeverity.Error,
             range: {
                 start: document.positionAt(alertPos),
                 end: document.positionAt(alertPos + 4)
             },
-            message: warnMsg,
+            message: errMsg,
             source: unikraftLanguageServer
         });
     }

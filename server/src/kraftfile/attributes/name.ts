@@ -3,10 +3,11 @@
 import {
     CompletionItemKind,
     CompletionItem,
+    InsertTextFormat,
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr, getProjectDirName } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "name";
@@ -19,7 +20,9 @@ const documentation: string = codeBlockStr +
     codeBlockStr +
     `For more visit: https://unikraft.org/docs/cli/reference/kraftfile/v0.6#top-level-name-attribute`;
 
-export function nameCompletionItem(): CompletionItem[] {
+export function nameCompletionItem(workspacePath: string): CompletionItem[] {
+    const projectDirName: string = getProjectDirName(workspacePath);
+
     return [
         {
             label: label,
@@ -27,14 +30,14 @@ export function nameCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `name: `,
+            insertText: `name: ${"${1:" + projectDirName + "}"}`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: documentation
             },
-            command: reTriggerCompletionCMD
         }
     ]
 }

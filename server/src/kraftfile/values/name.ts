@@ -5,28 +5,28 @@ import {
     CompletionItem,
 } from 'vscode-languageserver/node'
 import { unikraft } from '../../utils'
-import { codeBlockStr, getInLineAttribute } from '../utils';
+import { codeBlockStr, getInLineAttribute, getProjectDirName } from '../utils';
 
-export function nameValueCompletionItem(lineStr: string, workspaceDir: string): CompletionItem[] {
+export function nameValueCompletionItem(lineStr: string, workspacePath: string): CompletionItem[] {
     const attr: string | undefined = getInLineAttribute(lineStr);
     if (!attr || attr != "name") {
         return [];
     }
 
-    const projectName: string = workspaceDir.slice(workspaceDir.lastIndexOf("/") + 1)
+    const projectDirName: string = getProjectDirName(workspacePath);
 
     return [
         {
-            label: projectName,
+            label: projectDirName,
             labelDetails: {
                 detail: " string",
                 description: unikraft
             },
-            insertText: projectName,
+            insertText: projectDirName,
             kind: CompletionItemKind.Value,
             documentation: {
                 kind: "markdown",
-                value: codeBlockStr + "name: " + projectName + "\n" + codeBlockStr
+                value: codeBlockStr + "name: " + projectDirName + "\n" + codeBlockStr
             }
         }
     ];

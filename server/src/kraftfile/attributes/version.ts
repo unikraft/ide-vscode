@@ -3,11 +3,12 @@
 import {
     CompletionItemKind,
     CompletionItem,
-    MarkupContent
+    MarkupContent,
+    InsertTextFormat
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr, getDefaultLibVersions } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "version";
@@ -37,6 +38,7 @@ const markupDoc: MarkupContent = {
 };
 
 export function versionCompletionItem(): CompletionItem[] {
+    const versions = getDefaultLibVersions();
     return [
         {
             label: label,
@@ -44,11 +46,11 @@ export function versionCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `version: `,
+            insertText: `version: ${"${1|" + versions + "|}"}`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: markupDoc,
-            command: reTriggerCompletionCMD
         }
     ]
 }

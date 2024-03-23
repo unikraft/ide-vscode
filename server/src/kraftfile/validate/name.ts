@@ -20,12 +20,12 @@ export function validateName(document: TextDocument, kraftfile: KraftYamlType): 
     const docText = document.getText();
     const alertPos = docText.indexOf("name");
     const emptyWarning = {
-        severity: DiagnosticSeverity.Warning,
+        severity: DiagnosticSeverity.Error,
         range: {
             start: document.positionAt(alertPos),
             end: document.positionAt(alertPos + 4)
         },
-        message: `Warning: Empty value.`,
+        message: `Error: Empty value.`,
         source: unikraftLanguageServer
     }
 

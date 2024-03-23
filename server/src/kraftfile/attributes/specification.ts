@@ -3,11 +3,12 @@
 import {
     CompletionItemKind,
     CompletionItem,
-    MarkupContent
+    MarkupContent,
+    InsertTextFormat
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr } from '../utils';
+import { codeBlockStr, getSpecVersions } from '../utils';
 import { unikraft } from "../../utils";
 
 const shortLabel: string = "spec";
@@ -28,6 +29,7 @@ const markupDoc: MarkupContent = {
 };
 
 export function specificationCompletionItem(): CompletionItem[] {
+    const specVersions = getSpecVersions();
     return [
         {
             label: shortLabel,
@@ -35,7 +37,8 @@ export function specificationCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `spec: "v0.6"\n`,
+            insertText: `spec: ${"${1|" + specVersions + "|}"}`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: markupDoc
@@ -46,7 +49,8 @@ export function specificationCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `specification: "v0.6"\n`,
+            insertText: `specification: ${"${1|" + specVersions + "|}"}`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: markupDoc,

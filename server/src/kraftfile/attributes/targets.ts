@@ -3,10 +3,11 @@
 import {
     CompletionItemKind,
     CompletionItem,
+    InsertTextFormat,
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr, getArchs, getPlats } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "targets";
@@ -39,6 +40,9 @@ const fullDoc: string = `Each target consists of at minimum an architecture and 
 
 
 export function targetsCompletionItem(): CompletionItem[] {
+    const plats = getPlats();
+    const archs = getArchs();
+    const archPlatCombs: string = "qemu/x86_64,qemu/arm64,firecracker/x86_64,firecracker/arm64,xen/x86_64,xen/arm64";
     return [
         {
             label: label,
@@ -47,14 +51,14 @@ export function targetsCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `targets:\n` +
-                `  - `,
+                `  - ${"${1|" + archPlatCombs + "|}"}`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docShortHand + codeBlockStr
             },
-            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -63,8 +67,9 @@ export function targetsCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `targets:\n` +
-                `  - platform: \n` +
-                `    architecture: `,
+                `  - platform: ${"${1|" + plats + "|}"}\n` +
+                `    architecture: ${"${2|" + archs + "|}"}`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -72,7 +77,6 @@ export function targetsCompletionItem(): CompletionItem[] {
                 value: codeBlockStr + docLongHand + codeBlockStr
             },
             preselect: true,
-            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -81,18 +85,18 @@ export function targetsCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `targets:\n` +
-                `  - name: \n` +
-                `    platform: \n` +
-                `    architecture: \n` +
+                `  - name: $1\n` +
+                `    platform: ${"${2|" + plats + "|}"}\n` +
+                `    architecture: ${"${3|" + archs + "|}"}\n` +
                 `    kconfig:\n` +
-                `      `,
+                `      $4`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docAllAtributes + codeBlockStr
             },
-            command: reTriggerCompletionCMD
         }
     ]
 }
