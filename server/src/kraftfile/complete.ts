@@ -26,7 +26,7 @@ import { platformValueCompletionItem } from './values/targets';
 import { getCurrentWordFromYamlFile } from '../utils';
 import { targetsValueCompletionItem } from './values/targets';
 
-export function kraftfileCompletionItems(currentUriText: string, workspaceDir: string, params: TextDocumentPositionParams): CompletionItem[] {
+export function kraftfileCompletionItems(currentUriText: string, workspacePath: string, params: TextDocumentPositionParams): CompletionItem[] {
     let items: CompletionItem[] = [];
     const lines = currentUriText.split('\n');
     const lineStr = lines[params.position.line];
@@ -76,7 +76,7 @@ export function kraftfileCompletionItems(currentUriText: string, workspaceDir: s
         // These items are nested or root field simple values as string or number.
         items = items.concat(architectureValueCompletionItem(lineStr));
         items = items.concat(platformValueCompletionItem(lineStr));
-        items = items.concat(nameValueCompletionItem(lineStr, workspaceDir));
+        items = items.concat(nameValueCompletionItem(lineStr, workspacePath));
     } else if (isNested) {
         // These items are nested attributes.
         items = items.concat(architectureCompletionItem());
@@ -92,10 +92,10 @@ export function kraftfileCompletionItems(currentUriText: string, workspaceDir: s
         // These items are root attributes.
         items = items.concat(cmdCompletionItem());
         items = items.concat(librariesCompletionItem());
-        items = items.concat(nameCompletionItem());
+        items = items.concat(nameCompletionItem(workspacePath));
         items = items.concat(specificationCompletionItem());
         items = items.concat(targetsCompletionItem());
-        items = items.concat(unikraftCompletionItem());
+        items = items.concat(unikraftCompletionItem(workspacePath));
         items = items.concat(volumesCompletionItem());
         items = items.concat(rootfsCompletionItem());
         items = items.concat(runtimeCompletionItem());

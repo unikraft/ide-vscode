@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "kconfig";
@@ -59,7 +59,6 @@ export function kconfigCompletionItem(): CompletionItem[] {
                 kind: "markdown",
                 value: codeBlockStr + docObject + codeBlockStr
             },
-            command: reTriggerCompletionCMD
         },
         {
             label: label,
@@ -76,7 +75,6 @@ export function kconfigCompletionItem(): CompletionItem[] {
                 value: codeBlockStr + docArray + codeBlockStr
             },
             preselect: true,
-            command: reTriggerCompletionCMD
         }
     ]
 }

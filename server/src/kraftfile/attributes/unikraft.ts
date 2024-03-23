@@ -3,10 +3,11 @@
 import {
     CompletionItemKind,
     CompletionItem,
+    InsertTextFormat,
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, minimalKraftfile } from '../utils';
+import { codeBlockStr, getArchs, getDefaultLibVersions, getPlats, getProjectDirName, getSpecVersions } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "unikraft";
@@ -37,7 +38,13 @@ const fullDoc: string = `The attribute can be specified in multiple ways, the mo
     docShortHandSource + docLongHand + codeBlockStr +
     `For more visit: https://unikraft.org/docs/cli/reference/kraftfile/v0.6#top-level-unikraft-attribute`;
 
-export function unikraftCompletionItem(): CompletionItem[] {
+export function unikraftCompletionItem(workspacePath: string): CompletionItem[] {
+    const specVersions = getSpecVersions();
+    const versions = getDefaultLibVersions();
+    const archs = getArchs();
+    const plats = getPlats();
+    const projectDirName: string = getProjectDirName(workspacePath);
+
     return [
         {
             label: label,
@@ -45,7 +52,8 @@ export function unikraftCompletionItem(): CompletionItem[] {
                 detail: " only with version, string",
                 description: unikraft
             },
-            insertText: `unikraft: stable\n`,
+            insertText: `unikraft: ${"${1|" + versions + "|}"}`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -59,7 +67,8 @@ export function unikraftCompletionItem(): CompletionItem[] {
                 detail: " only with source url, string",
                 description: unikraft
             },
-            insertText: `unikraft: https://github.com/unikraft/unikraft.git\n`,
+            insertText: 'unikraft: ${1:https://github.com/unikraft/unikraft.git}',
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -74,7 +83,8 @@ export function unikraftCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `unikraft:\n` +
-                `  version: stable\n`,
+                `  version: ${"${1|" + versions + "|}"}`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -90,10 +100,11 @@ export function unikraftCompletionItem(): CompletionItem[] {
                 description: unikraft
             },
             insertText: `unikraft:\n` +
-                `  source: https://github.com/unikraft/unikraft.git\n` +
-                `  version: stable\n` +
+                '  source: ${1:https://github.com/unikraft/unikraft.git}\n' +
+                `  version: ${"${2|" + versions + "|}"}\n` +
                 `  kconfig:\n` +
                 `    `,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -107,12 +118,27 @@ export function unikraftCompletionItem(): CompletionItem[] {
                 detail: " kraftfile",
                 description: unikraft
             },
-            insertText: minimalKraftfile,
+            insertText: `spec: ${"${1|" + specVersions + "|}"}\n` +
+                `name: ${"${2|" + projectDirName + "|}"}\n` +
+                `unikraft:\n` +
+                `  version: ${"${3|" + versions + "|}"}\n` +
+                `targets:\n` +
+                `  - plat: ${"${4|" + plats + "|}"}\n` +
+                `    arch: ${"${5|" + archs + "|}"}\n`,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Snippet,
             detail: `Kraftfile basic attributes.`,
             documentation: {
                 kind: "markdown",
-                value: codeBlockStr + minimalKraftfile + codeBlockStr
+                value: codeBlockStr +
+                    `spec: "v0.6"\n` +
+                    `name: ${projectDirName}\n` +
+                    `unikraft:\n` +
+                    `  version: stable\n` +
+                    `targets:\n` +
+                    `  - plat: qemu\n` +
+                    `    arch: x86_64\n` +
+                    codeBlockStr
             }
         }
     ]

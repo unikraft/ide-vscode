@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr } from '../utils';
 import { unikraft } from "../../utils";
 
 const label: string = "libraries";
@@ -46,7 +46,6 @@ export function librariesCompletionItem(): CompletionItem[] {
                 kind: "markdown",
                 value: documentation
             },
-            command: reTriggerCompletionCMD
         }
     ]
 }

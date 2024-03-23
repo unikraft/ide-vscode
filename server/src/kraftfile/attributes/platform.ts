@@ -3,10 +3,11 @@
 import {
     CompletionItemKind,
     CompletionItem,
+    InsertTextFormat,
 } from 'vscode-languageserver/node'
 
 import { HoverItem } from '../types';
-import { codeBlockStr, reTriggerCompletionCMD } from '../utils';
+import { codeBlockStr, getPlats } from '../utils';
 import { unikraft } from "../../utils";
 
 const shortLabel: string = "plat";
@@ -28,6 +29,9 @@ const fullDoc: string = `Each target consists of at minimum an architecture and 
     `For more visit: https://unikraft.org/docs/cli/reference/kraftfile/v0.6#top-level-targets-attributes`
 
 export function platformCompletionItem(): CompletionItem[] {
+    const plats = getPlats();
+    const plat = `plat: ${"${1|" + plats + "|}"}`;
+    const platform = `platform: ${"${1|" + plats + "|}"}`;
     return [
         {
             label: shortLabel,
@@ -35,14 +39,14 @@ export function platformCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `plat: `,
+            insertText: plat,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
                 kind: "markdown",
                 value: codeBlockStr + docShortLabel + codeBlockStr
             },
-            command: reTriggerCompletionCMD
         },
         {
             label: longLabel,
@@ -50,7 +54,8 @@ export function platformCompletionItem(): CompletionItem[] {
                 detail: " string",
                 description: unikraft
             },
-            insertText: `platform: `,
+            insertText: platform,
+            insertTextFormat: InsertTextFormat.Snippet,
             kind: CompletionItemKind.Keyword,
             detail: detail,
             documentation: {
@@ -58,7 +63,6 @@ export function platformCompletionItem(): CompletionItem[] {
                 value: codeBlockStr + docLongLabel + codeBlockStr
             },
             preselect: true,
-            command:reTriggerCompletionCMD
         }
     ]
 }

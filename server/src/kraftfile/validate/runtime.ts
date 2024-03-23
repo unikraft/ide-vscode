@@ -20,12 +20,12 @@ export function validateRuntime(document: TextDocument, kraftfile: KraftYamlType
     const docText = document.getText();
     const alertPos = docText.indexOf("runtime");
     const emptyWarning = {
-        severity: DiagnosticSeverity.Warning,
+        severity: DiagnosticSeverity.Error,
         range: {
             start: document.positionAt(alertPos),
             end: document.positionAt(alertPos + 7)
         },
-        message: `Warning: Empty value.`,
+        message: `Error: Empty value.`,
         source: unikraftLanguageServer
     }
 
