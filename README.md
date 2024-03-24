@@ -232,6 +232,8 @@ LSP provide Hover feature only for all the attributes of `Kraftfile`.
 
 LSP provide validation feature against null value of any attribute in `Kraftfile`.
 
+![Validating Kraftfile](https://github.com/unikraft/ide-vscode/blob/main/media/kraftfile-validation.gif)
+
 ## Known Issues
 
 * The `External libraries` view is not automatically updated when the following are changed manually:
