@@ -42,7 +42,7 @@ const fullDoc: string = `Each target consists of at minimum an architecture and 
 export function targetsCompletionItem(): CompletionItem[] {
     const plats = getPlats();
     const archs = getArchs();
-    const archPlatCombs: string = "qemu/x86_64,qemu/arm64,firecracker/x86_64,firecracker/arm64,xen/x86_64,xen/arm64";
+    const archPlatCombs: string = "qemu/x86_64,qemu/arm64,firecracker/x86_64,firecracker/arm64,xen/x86_64,xen/arm64,kraftcloud/x86_64";
     return [
         {
             label: label,
