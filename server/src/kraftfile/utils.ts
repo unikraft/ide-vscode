@@ -26,7 +26,7 @@ export function getArchs(): string {
 }
 
 export function getPlats(): string {
-    return "qemu,xen,firecracker";
+    return "qemu,xen,firecracker,kraftcloud";
 }
 
 export function getDefaultLibVersions(): string {

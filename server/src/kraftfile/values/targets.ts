@@ -18,6 +18,7 @@ export function targetsValueCompletionItem(paretnAttribute: string): CompletionI
     const fcArm64 = "firecracker/arm64"
     const xenX86 = "xen/x86_64"
     const xenArm64 = "xen/arm64"
+    const kcX86 = "kraftcloud/x86_64"
 
     return [
         {
@@ -127,6 +128,24 @@ export function targetsValueCompletionItem(paretnAttribute: string): CompletionI
             },
             sortText: "6",
             preselect: true
+        },
+        {
+            label: kcX86,
+            labelDetails: {
+                detail: " string",
+                description: unikraft
+            },
+            insertText: kcX86,
+            kind: CompletionItemKind.Value,
+            documentation: {
+                kind: "markdown",
+                value: codeBlockStr +
+                    "targets:\n" +
+                    "  - " + kcX86 + "\n" +
+                    codeBlockStr
+            },
+            sortText: "7",
+            preselect: true
         }
     ];
 }
@@ -213,5 +232,18 @@ export function platformValueCompletionItem(lineStr: string): CompletionItem[] {
                 value: codeBlockStr + "arch: " + "firecracker" + "\n" + codeBlockStr
             }
         },
+        {
+            label: "kraftcloud",
+            labelDetails: {
+                detail: " string",
+                description: unikraft
+            },
+            insertText: "kraftcloud",
+            kind: CompletionItemKind.Value,
+            documentation: {
+                kind: "markdown",
+                value: codeBlockStr + "arch: " + "kraftcloud" + "\n" + codeBlockStr
+            }
+        }
     ];
 }
