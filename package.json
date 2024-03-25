@@ -2,7 +2,7 @@
   "name": "unikraft-ide-vscode",
   "displayName": "Unikraft",
   "description": "Seamlessly build and manage Unikraft components from within VSCode!",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "publisher": "unikraft",
   "license": "MIT",
   "repository": {
